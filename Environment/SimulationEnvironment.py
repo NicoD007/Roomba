@@ -2,7 +2,6 @@ import sys
 import pygame
 
 from ChargingStation import ChargingStation
-from Obstacles import Obstacles
 from RoomMap import RoomMap
 
 
@@ -14,7 +13,6 @@ class SimulationEnvironment:
         fps: int = 30,
         title: str = "Simulation Environment",
         charging_station: ChargingStation | None = None,
-        obstacles: list[Obstacles] | None = None,
         room_map: RoomMap | None = None,
     ) -> None:
         self._window = None
@@ -25,7 +23,6 @@ class SimulationEnvironment:
         self._clock = None
         self._running = False
         self._charging_station = charging_station
-        self._obstacles = obstacles or []
         self._room_map = room_map
 
     def initialize(self) -> bool:
