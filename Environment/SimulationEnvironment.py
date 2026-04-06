@@ -1,8 +1,13 @@
 import sys
+import os
 import pygame
+
+# Add parent directory to path so we can import from Core and Environment
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ChargingStation import ChargingStation
 from RoomMap import RoomMap
+from Core.CleaningModule import CleaningModule
 
 
 class SimulationEnvironment:
@@ -24,6 +29,8 @@ class SimulationEnvironment:
         self._running = False
         self._charging_station = charging_station
         self._room_map = room_map
+        self._sprites = pygame.sprite.Group()
+        self._cleaning_module = None
 
     def initialize(self) -> bool:
         pygame.init()
@@ -33,6 +40,11 @@ class SimulationEnvironment:
         pygame.display.set_caption(self._title)
         self._clock = pygame.time.Clock()
         self._running = True
+        
+        # Initialize cleaning module in top-left corner
+        self._cleaning_module = CleaningModule(50, 50, 50)
+        self._sprites.add(self._cleaning_module)
+        
         return True
 
     def stop(self) -> bool:
@@ -71,7 +83,8 @@ class SimulationEnvironment:
         while self._running:
             self.handle_events()
             self.clear((20, 20, 20))
-            # Blank scene for now; no objects rendered.
+            # Draw all sprites
+            self._sprites.draw(self._window)
             self.update()
 
         self.stop()
