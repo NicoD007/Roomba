@@ -1,15 +1,45 @@
 class Sensor:
-    "Represents the robot's sensor."
+    def __init__(self, sensorRadius):
+        self.sensorRadius = sensorRadius
 
-    def __init__(self, sensorRadius: int) -> None:
-        self._sensor_radius = sensorRadius
+    # -------------------------------
+    # GET CELLS IN RADIUS
+    # -------------------------------
+    def _get_cells_in_radius(self, position, grid):
+        cx, cy = position
+        cells = []
 
-        # TO-DO: logic for how the sensor detects obstacles and dirt, 
-        # and how it interacts with the module map
+        for x in range(len(grid)):
+            for y in range(len(grid[0])):
+                dist = abs(cx - x) + abs(cy - y)
 
-    def detectObstacles(self, RoomMap) -> bool:
-        return False
+                if dist <= self.sensorRadius:
+                    cells.append((x, y))
 
-    def detectDirt(self, RoomMap) -> bool:
-        return False
-   
+        return cells
+
+    # -------------------------------
+    # DIRT SCAN
+    # -------------------------------
+    def dirtScan(self, position, grid):
+        cells = self._get_cells_in_radius(position, grid)
+
+        dirt_cells = []
+        for (x, y) in cells:
+            if grid[x][y] == 1:  # uncleaned
+                dirt_cells.append((x, y))
+
+        return dirt_cells
+
+    # -------------------------------
+    # OBSTACLE SCAN
+    # -------------------------------
+    def obstacleScan(self, position, grid):
+        cells = self._get_cells_in_radius(position, grid)
+
+        obstacle_cells = []
+        for (x, y) in cells:
+            if grid[x][y] in [0, 2]:  # wall or obstacle
+                obstacle_cells.append((x, y))
+
+        return obstacle_cells
