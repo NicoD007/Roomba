@@ -41,6 +41,11 @@ class SimulationEnvironment:
         self._clock = pygame.time.Clock()
         self._running = True
         
+        # Initialize room map if not provided
+        if self._room_map is None:
+            self._room_map = RoomMap(roomId=1, width=32, height=32, objects=[])
+            self._room_map.generate()
+        
         # Initialize cleaning module in top-left corner
         self._cleaning_module = CleaningModule(50, 50, 50)
         self._sprites.add(self._cleaning_module)
@@ -58,6 +63,31 @@ class SimulationEnvironment:
     def clear(self, color=(30, 30, 30)) -> None:
         if self._window is not None:
             self._window.fill(color)
+
+    def draw_room_map(self) -> None:
+        if self._window is None or self._room_map is None:
+            return
+        
+        # Get the blueprint from room map
+        blueprint = getattr(self._room_map, '_blueprint', None)
+        if blueprint is None:
+            return
+            
+        # Calculate cell size to fit the map in the window
+        cell_width = self._window_width // len(blueprint[0]) if blueprint[0] else 20
+        cell_height = self._window_height // len(blueprint) if blueprint else 20
+        cell_size = min(cell_width, cell_height)
+        
+        # Draw each cell
+        for y, row in enumerate(blueprint):
+            for x, cell in enumerate(row):
+                rect = pygame.Rect(x * cell_size, y * cell_size, cell_size, cell_size)
+                if cell == 1:  # Room floor
+                    pygame.draw.rect(self._window, (100, 100, 100), rect)
+                    pygame.draw.rect(self._window, (150, 150, 150), rect, 1)  # Border
+                elif cell == 2:  # Object/obstacle
+                    pygame.draw.rect(self._window, (200, 50, 50), rect)  # Red for obstacles
+                    pygame.draw.rect(self._window, (255, 100, 100), rect, 1)
 
     def update(self) -> None:
         if self._window is None:
@@ -83,6 +113,8 @@ class SimulationEnvironment:
         while self._running:
             self.handle_events()
             self.clear((20, 20, 20))
+            # Draw room map
+            self.draw_room_map()
             # Draw all sprites
             self._sprites.draw(self._window)
             self.update()
