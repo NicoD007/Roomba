@@ -59,13 +59,12 @@ class SimulationEnvironment:
         if self._window is not None:
             self._window.fill(color)
 
-    def update(self) -> float:
-        if self._window is None or self._clock is None:
-            return 0.0
+    def update(self) -> None:
+        if self._window is None:
+            return
 
         pygame.display.flip()
-        delta_ms = self._clock.tick(self._fps)
-        return delta_ms / 1000.0
+        self._clock.tick(self._fps)
 
     def handle_events(self) -> bool:
         for event in pygame.event.get():
@@ -85,13 +84,8 @@ class SimulationEnvironment:
             self.handle_events()
             self.clear((20, 20, 20))
             # Draw all sprites
-            if self._window is not None:
-                self._sprites.draw(self._window)
-            dt = self.update()
-
-            # When you wire charging into the loop, pass dt to charge() so
-            # chargeRate behaves as "percent per second".
-    
+            self._sprites.draw(self._window)
+            self.update()
 
         self.stop()
 
