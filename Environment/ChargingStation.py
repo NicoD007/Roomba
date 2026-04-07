@@ -16,4 +16,5 @@ class ChargingStation:
         return 0 #TO-DO : implement logic for charging the robot's battery based on charge rate and time spent at station
 
     def atStation(self) -> bool:
-        return False #TO-DO : Make this work
+        return True #TO-DO : Make this work
+    #Test I only want to change this
