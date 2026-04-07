@@ -8,6 +8,7 @@
 
 
 import random
+from Obstacles import Obstacles
 
 class RoomMap:
     def __init__(self, roomId: int, width: int = 32, height: int = 32, objects: list = None, position: tuple = None, blueprint: list[list[int]] = None, numOfRooms: int = 6) -> None:
@@ -26,8 +27,8 @@ class RoomMap:
         room_id = 0
         numOfRooms = self._numOfRooms
         # get first room coordinates
-        room1_x = random.randint(0, self._width//2)
-        room1_y = random.randint(0, self._height//2)
+        room1_x = random.randint(0, 5+ self._width//2)
+        room1_y = random.randint(0, 5+ self._height//2)
         self._rooms.append((0, 0, room1_x, room1_y, room_id))
         
         # Fill first room with 1s
@@ -86,14 +87,42 @@ class RoomMap:
         self._width = len(self._map[0]) if self._map else 0
 
         self._blueprint = self._map
-        #adding objects to the map
+        # Create obstacles
         for room in self._rooms:
             start_x, start_y, end_x, end_y, room_id = room
             for _ in range(random.randint(0, 5)):  # Random number of objects per room
                 obj_x = random.randint(start_x, end_x)
                 obj_y = random.randint(start_y, end_y)
-                self._map[obj_y][obj_x] = 2  
-                self._objects.append((obj_x, obj_y))  # Store object position
+                # Create an Obstacle instance and add to objects list
+                size = random.randint(1, 3)
+                
+                # Check if it fits
+                while size >= 1:
+                    check_x = obj_x + size - 1
+                    check_y = obj_y + size - 1
+                    
+                    # Verify position is within bounds and on a room tile
+                    if check_x < len(self._map[0]) and check_y < len(self._map) and self._map[check_y][check_x] == 1:
+                        break  # Valid placement found
+                    
+                    size -= 1
+                
+               
+                obstacle = Obstacles(size=size, posX=obj_x, posY=obj_y, isMovable=random.choice([True, False]))
+                self._objects.append(obstacle)
+
+        # Draw obstacles on the map
+        for obstacle in self._objects:
+            pattern = obstacle.getShape()
+            obj_x, obj_y = obstacle.getPosition()
+            # Draw the pattern onto the map
+            for py in range(len(pattern)):
+                for px in range(len(pattern[0])):
+                    if pattern[py][px] == 2:
+                        map_y = obj_y + py
+                        map_x = obj_x + px
+                        if 0 <= map_y < len(self._map) and 0 <= map_x < len(self._map[0]):
+                            self._map[map_y][map_x] = 2
                 
 
 

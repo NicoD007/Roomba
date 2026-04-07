@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from ChargingStation import ChargingStation
 from RoomMap import RoomMap
 from Core.CleaningModule import CleaningModule
+from Obstacles import Obstacles
 
 
 class SimulationEnvironment:
