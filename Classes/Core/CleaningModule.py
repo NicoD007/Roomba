@@ -94,7 +94,7 @@ class CleaningModule(pygame.sprite.Sprite):
         return self._battery.checkBattery()
 
     def setBatteryLevel(self, batteryPercentage: int) -> None:
-        self._battery._battery_percentage = max(0, min(100, int(batteryPercentage)))
+        self._battery.setBattery(batteryPercentage)
 
     def requestCharging(self) -> bool:
         return self.readBattery() < 20

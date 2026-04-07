@@ -9,8 +9,6 @@ class Battery:
         "Return the current battery percentage."
         return self._battery_percentage
 
-    def beep(self) -> None:
-        "Trigger a warning if battery is critically low."
-        if self._battery_percentage < 5: # TO-DO: implement an actual 
-            # warning for this method
-            pass
+    def setBattery(self, percentage: int) -> None:
+        "Set the battery percentage, clamped between 0 and 100."
+        self._battery_percentage = max(0, min(100, percentage))
