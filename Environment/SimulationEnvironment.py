@@ -89,12 +89,13 @@ class SimulationEnvironment:
                     pygame.draw.rect(self._window, (200, 50, 50), rect)  # Red for obstacles
                     pygame.draw.rect(self._window, (255, 100, 100), rect, 1)
 
-    def update(self) -> None:
-        if self._window is None:
-            return
+    def update(self) -> float:
+        if self._window is None or self._clock is None:
+            return 0.0
 
         pygame.display.flip()
-        self._clock.tick(self._fps)
+        delta_ms = self._clock.tick(self._fps)
+        return delta_ms / 1000.0
 
     def handle_events(self) -> bool:
         for event in pygame.event.get():
@@ -116,8 +117,11 @@ class SimulationEnvironment:
             # Draw room map
             self.draw_room_map()
             # Draw all sprites
-            self._sprites.draw(self._window)
-            self.update()
+            if self._window is not None:
+                self._sprites.draw(self._window)
+            dt = self.update() #dt will be used for charging per second and for drain
+
+           
 
         self.stop()
 
