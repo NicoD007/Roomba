@@ -43,7 +43,7 @@ class SimulationEnvironment:
         
         # Initialize room map if not provided
         if self._room_map is None:
-            self._room_map = RoomMap(roomId=1, width=32, height=32, objects=[])
+            self._room_map = RoomMap(roomId=1, width=64, height=42, objects=[], numOfRooms=6)
             self._room_map.generate()
         
         # Initialize cleaning module in top-left corner
@@ -88,6 +88,10 @@ class SimulationEnvironment:
                 elif cell == 2:  # Object/obstacle
                     pygame.draw.rect(self._window, (200, 50, 50), rect)  # Red for obstacles
                     pygame.draw.rect(self._window, (255, 100, 100), rect, 1)
+                elif cell == 0:  #wall
+                    pygame.draw.rect(self._window, (20, 20, 20), rect)  # Gray for walls
+                    pygame.draw.rect(self._window, (50, 50, 50), rect, 1)
+
 
     def update(self) -> float:
         if self._window is None or self._clock is None:
