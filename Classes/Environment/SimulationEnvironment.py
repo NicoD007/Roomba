@@ -92,6 +92,15 @@ class SimulationEnvironment:
                 elif cell == 0:  #wall
                     pygame.draw.rect(self._window, (20, 20, 20), rect)  # Gray for walls
                     pygame.draw.rect(self._window, (50, 50, 50), rect, 1)
+                elif cell == 3:  #cleaned tile
+                    pygame.draw.rect(self._window, (255, 182, 193), rect)  # pink
+                    pygame.draw.rect(self._window, (50, 50, 50), rect, 1)
+                elif cell == 4:  #cleaning module                                                       #place roomba sprite on top of it
+                    pygame.draw.rect(self._window, (146, 41, 82), rect)  # por por a
+                    pygame.draw.rect(self._window, (150, 150, 150), rect, 1)
+                elif cell == 5:  #charging station
+                    pygame.draw.rect(self._window, (245, 217, 10), rect)  # yollowww
+                    pygame.draw.rect(self._window, (50, 50, 150), rect, 1)
 
 
     def update(self) -> float:
