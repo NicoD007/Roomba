@@ -1,6 +1,8 @@
 import pygame
 from typing import Tuple
 
+from RobotInternals.Battery import Battery
+
 
 class CleaningModule(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, size: int = 50):
@@ -12,6 +14,7 @@ class CleaningModule(pygame.sprite.Sprite):
         self.direction: str = ""
         self.isActive: bool = False
         self.unFinishedCleaning: bool = False
+        self._battery = Battery(joules=100, batteryPercentage=30)
 
         self.size = size
         self.image = self._draw_roomba(size)
@@ -82,16 +85,22 @@ class CleaningModule(pygame.sprite.Sprite):
         pass
 
     def getBatteryLevel(self) -> float:
-        pass
+        return float(self._battery.checkBattery())
 
     def noActionTimer(self) -> None:
         pass
 
     def readBattery(self) -> int:
-        pass
+        return self._battery.checkBattery()
+
+    def setBatteryLevel(self, batteryPercentage: int) -> None:
+        self._battery.setBattery(batteryPercentage)
 
     def requestCharging(self) -> bool:
-        pass
+        return self.readBattery() < 20
+
+    def shutDown(self) -> bool:
+        return self.stop()
 
     def moveTo(self, target: Tuple[int, int]) -> None:
         self.setPosition(target[0], target[1])
