@@ -1,5 +1,5 @@
 import paho.mqtt.client as mqtt
-from Classes.Core.CleaningModule import CleaningModule
+from Core.CleaningModule import CleaningModule
 
 
 class MQTTClient:
@@ -38,6 +38,15 @@ class MQTTClient:
             print(f"Failed to subscribe: {e}")
             return False
 
+    def publish_command(self, command: str) -> bool:
+        """Publish a command message to the command topic."""
+        try:
+            self._client.publish(self._topic_command, command)
+            return True
+        except Exception as e:
+            print(f"Failed to publish command: {e}")
+            return False
+
     def handleCommand(self, command: str) -> None:
         """Handle incoming command. If 'start', trigger cleaning."""
         command = command.strip().lower()
@@ -47,6 +56,7 @@ class MQTTClient:
     def _on_connect(self, client, userdata, flags, rc) -> None:
         """MQTT callback: triggered when broker connection established."""
         if rc == 0:
+            print("MQTT connected.")
             self.subscribe()
         else:
             print(f"Failed to connect, return code {rc}")
@@ -54,4 +64,5 @@ class MQTTClient:
     def _on_message(self, client, userdata, msg) -> None:
         """MQTT callback: triggered when message received."""
         command = msg.payload.decode().strip()
+        print(f"MQTT received command: {command}")
         self.handleCommand(command)
