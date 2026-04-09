@@ -10,6 +10,7 @@ import random
 from Environment.Obstacles import Obstacles
 from Core.ModuleMap import ModuleMap
 from Environment.ChargingStation import ChargingStation
+from Core.CleaningModule import CleaningModule
 
 class RoomMap:
     def __init__(self, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
@@ -80,6 +81,11 @@ class RoomMap:
 
         self._map[2][2] = 5
         ChargingStation((2,2))
+
+        #add cleaningmodule
+        CleaningModule(2,2)
+
+
 
         #trimming unused rows and columns
         while self._map and sum(self._map[-1]) == 0:
