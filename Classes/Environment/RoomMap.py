@@ -9,6 +9,7 @@
 
 import random
 from Obstacles import Obstacles
+from Classes.Core.ModuleMap import ModuleMap
 
 class RoomMap:
     def __init__(self, roomId: int, width: int = 32, height: int = 32, objects: list = None, position: tuple = None, blueprint: list[list[int]] = None, numOfRooms: int = 6) -> None:
@@ -18,6 +19,7 @@ class RoomMap:
         self._objects = objects
         self._position = position
         self._blueprint = blueprint
+        self._objectlessBlueprint = list[list[int]]
         self._rooms = []  # [(start_x, start_y, end_x, end_y, room_id), ...]
         self._numOfRooms = numOfRooms
 
@@ -27,8 +29,8 @@ class RoomMap:
         room_id = 0
         numOfRooms = self._numOfRooms
         # get first room coordinates
-        room1_x = random.randint(0, 5+ self._width//2)
-        room1_y = random.randint(0, 5+ self._height//2)
+        room1_x = random.randint(0,  self._width//2)
+        room1_y = random.randint(0,  self._height//2)
         self._rooms.append((0, 0, room1_x, room1_y, room_id))
         
         # Fill first room with 1s
@@ -72,10 +74,15 @@ class RoomMap:
                 for y in range(new_room_start_y, new_room_end_y + 1):
                     self._map[y][x] = 1
 
+        # place safe zone and charging station
+        for x in range(5):
+                for y in range(5):
+                    self._map[y][x] = 1
+
+        self._map[2][2] = 5
+
+
         #trimming unused rows and columns
-        
-        # Trim unused rows and columns
-        # Trim rows from bottom
         while self._map and sum(self._map[-1]) == 0:
             self._map.pop()
         # Trim columns from right
@@ -86,7 +93,11 @@ class RoomMap:
         self._height = len(self._map)
         self._width = len(self._map[0]) if self._map else 0
 
-        self._blueprint = self._map
+
+        
+        self._objectlessBlueprint = self._blueprint
+
+
         # Create obstacles
         for room in self._rooms:
             start_x, start_y, end_x, end_y, room_id = room
@@ -123,7 +134,10 @@ class RoomMap:
                         map_x = obj_x + px
                         if 0 <= map_y < len(self._map) and 0 <= map_x < len(self._map[0]):
                             self._map[map_y][map_x] = 2
-                
+        
+        
+        self._blueprint = self._map        
+
 
 
     def getRoomId(self) -> int:
@@ -132,6 +146,16 @@ class RoomMap:
         pass #TO-DO : implement logic for adding an object to the room map
     def removeObject(self, objects: list) -> None:
         pass #TO-DO : implement logic for removing an object from the room map
-    def pushMap(self,module_map) -> None:
-        pass #TO-DO : implement logic for pushing the room map to modulemap
-        #hiiiiiiii
+    
+    def pushMap(self, module_map=None) -> None:
+        if module_map is None:
+            # Create a new ModuleMap instance if one doesn't exist
+            module_map = ModuleMap(
+                grid=self._map,
+                cleanedCell=set(),
+                mapData=self._objectlessBlueprint
+            )
+        else:
+            # Update existing module_map
+            module_map.map = self._objectlessBlueprint
+        return module_map

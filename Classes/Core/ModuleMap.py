@@ -1,19 +1,23 @@
-class ModuleMap: #Didn't implement arrows yet sorry
+
+#remove update dirt from diagrams
+#change cleanedCell to cleanedCells
+#remove grid from diagram and code, not sure of its porpuse
+
+class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows? 
     "Represents the robot's internal map."
 
-    def __init__(self, grid, cleanedCell, mapData) -> None:
+    def __init__(self, grid, cleanedCells, mapData) -> None:
         self._grid = grid
-        self._cleaned_cell = cleanedCell
+        self._cleaned_cell = cleanedCells
         self.map = mapData
 
-    def updateObstacles(self) -> None:
-        pass
+    def updateObstacles(self, obstacleLocation) -> None:
+        x, y = obstacleLocation
+        self.map[x][y] = 4
 
-    def updateDirt(self) -> None:
-        pass
-
-    def updateCell(self) -> None:
-        pass
+    def updateCell(self, Location, value) -> None:
+        x, y = Location
+        self.map[x][y] = value
 
     def mapComplete(self) -> bool:
-        return True #TO-DO : implement logic to determine if the map is complete, meaning all cells have been cleaned and all obstacles have been mapped
+        return not any(1 in row for row in self.map)

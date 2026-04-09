@@ -1,6 +1,8 @@
+from Classes.Core.ModuleMap import ModuleMap
+
 class NavigationController:
-    def __init__(self, grid, pathPlanner):
-        self.grid = grid
+    def __init__(self, moduleMap, pathPlanner):
+        self.moduleMap = moduleMap
         self.pathPlanner = pathPlanner
 
         self.startLocation = None
@@ -15,9 +17,9 @@ class NavigationController:
     # -------------------------------
     # INIT
     # -------------------------------
-    def startNav(self, start):
-        self.startLocation = start
-        self.currentPosition = start
+    def startNav(self, startLocation):
+        self.startLocation = startLocation
+        self.currentPosition = startLocation
 
         self.targetLocation = self.choose_target()
 
@@ -42,21 +44,27 @@ class NavigationController:
     # UPDATE POSITION
     # -------------------------------
     def updatePosition(self, new_position):
+        if self.currentPosition == self.startLocation:
+            x, y = self.currentPosition
+            self.moduleMap.map[x][y] = 5 #leave charging station alone
+        else:
+            x, y = self.currentPosition
+            self.moduleMap.map[x][y] = 3 #place clean tile
+        
         self.currentPosition = new_position
 
         x, y = new_position
-
-        if self.grid[x][y] == 1:
-            self.grid[x][y] = 4  # cleaned
+        if self.moduleMap.map[x][y] == 1:
+            self.moduleMap.map[x][y] = 4  # move
 
     # -------------------------------
     # HANDLE OBSTACLE
     # -------------------------------
-    def handle_obstacle(self, pos):
+    def handle_obstacle(self, pos):     #isnt it belong in sensor and cleaning module?
         x, y = pos
 
-        if self.grid[x][y] not in [0, 2]:
-            self.grid[x][y] = 2
+        if self.moduleMap.map[x][y] not in [0, 2]:     
+            self.moduleMap.map[x][y] = 2             
 
             # Replan ONLY if obstacle affects remaining path
             if pos in self.path[self.pathIndex:]:
@@ -65,15 +73,15 @@ class NavigationController:
     # -------------------------------
     # TARGET SELECTION
     # -------------------------------
-    def choose_target(self):
+    def choose_target(self):            #isnt it belong in cleaning module?
         cx, cy = self.currentPosition
 
         best = None
         best_dist = float('inf')
 
-        for x in range(len(self.grid)):
-            for y in range(len(self.grid[0])):
-                if self.grid[x][y] == 1:
+        for x in range(len(self.moduleMap.map)):
+            for y in range(len(self.moduleMap.map[0])):
+                if self.moduleMap.map[x][y] == 1:
                     dist = abs(cx - x) + abs(cy - y)
                     if dist < best_dist:
                         best_dist = dist
@@ -85,9 +93,9 @@ class NavigationController:
     # CHARGING
     # -------------------------------
     def find_charger(self):
-        for x in range(len(self.grid)):
-            for y in range(len(self.grid[0])):
-                if self.grid[x][y] == 5:
+        for x in range(len(self.moduleMap.map)):
+            for y in range(len(self.moduleMap.map[0])):
+                if self.moduleMap.map[x][y] == 5:
                     return (x, y)
         return None
 
@@ -126,10 +134,11 @@ class NavigationController:
 
         x, y = next_tile
 
-        if self.grid[x][y] in [0, 2]:
+        if self.moduleMap.map[x][y] in [0, 2]:
             self.requestPath(self.targetLocation)
             return None
 
+        self.updatePosition(next_tile)
         self.pathIndex += 1
         return next_tile
 
@@ -137,4 +146,4 @@ class NavigationController:
     # STATUS
     # -------------------------------
     def is_done_cleaning(self):
-        return not any(1 in row for row in self.grid)
+        return not any(1 in row for row in self.moduleMap.map)
