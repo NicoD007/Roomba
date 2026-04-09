@@ -23,7 +23,23 @@ class RoomMap:
         self._rooms = []  # [(start_x, start_y, end_x, end_y, room_id), ...]
         self._numOfRooms = numOfRooms
 
-
+    def addObject(self, objects: list) -> None:
+        pass #TO-DO : implement logic for adding an object to the room map
+    def removeObject(self, objects: list) -> None:
+        pass #TO-DO : implement logic for removing an object from the room map
+    
+    def pushMap(self, MapToPush, module_map=None) -> ModuleMap:
+        if module_map is None:
+            # Create a new ModuleMap instance if one doesn't exist
+            module_map = ModuleMap(
+                cleanedCells=set(),
+                mapData=MapToPush
+            )
+        else:
+            # Update existing module_map
+            module_map.map = MapToPush
+        return module_map
+    
     def generate(self) -> None:
         self._map = [[0 for _ in range(self._width)] for _ in range(self._height)]
         room_id = 0
@@ -101,6 +117,7 @@ class RoomMap:
 
         
         self._objectlessBlueprint = self._blueprint
+        self.pushMap(self._objectlessBlueprint)
 
 
         # Create obstacles
@@ -142,22 +159,3 @@ class RoomMap:
         
         
         self._blueprint = self._map        
-
-
-    def addObject(self, objects: list) -> None:
-        pass #TO-DO : implement logic for adding an object to the room map
-    def removeObject(self, objects: list) -> None:
-        pass #TO-DO : implement logic for removing an object from the room map
-    
-    def pushMap(self, module_map=None) -> ModuleMap:
-        if module_map is None:
-            # Create a new ModuleMap instance if one doesn't exist
-            module_map = ModuleMap(
-                grid=self._map,
-                cleanedCells=set(),
-                mapData=self._objectlessBlueprint
-            )
-        else:
-            # Update existing module_map
-            module_map.map = self._objectlessBlueprint
-        return module_map
