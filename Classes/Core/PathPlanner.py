@@ -1,5 +1,5 @@
 class PathPlanner:
-    "Represents the path planning logic for the robot."
+    "This class handles the path planning logic for the roomba using a greedy approach."
 
     def __init__(self, currentPath, mapData) -> None:
         self._current_path = currentPath or []
