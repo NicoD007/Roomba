@@ -1,4 +1,5 @@
 from Classes.Core.ModuleMap import ModuleMap
+from Core.PathPlanner import PathPlanner
 
 class NavigationController:
     def __init__(self, moduleMap, pathPlanner):
@@ -6,7 +7,7 @@ class NavigationController:
         self.pathPlanner = pathPlanner
 
         self.startLocation = None
-        self.currentPosition = None
+        self.currentPosition = (0,0)
         self.targetLocation = None
 
         self.path = []
@@ -37,7 +38,7 @@ class NavigationController:
             return
 
         self.targetLocation = target
-        self.path = self.pathPlanner.plan(self.currentPosition, target)
+        self.path = self.pathPlanner.generatePath(self.currentPosition, target)
         self.pathIndex = 0
 
     # -------------------------------
@@ -64,7 +65,10 @@ class NavigationController:
         x, y = pos
 
         if self.moduleMap.map[x][y] not in [0, 2]:     
-            self.moduleMap.map[x][y] = 2             
+            self.moduleMap.map[x][y] = 2      
+
+            # update planner map
+            self.pathPlanner.updateMap(self.moduleMap.map)
 
             # Replan ONLY if obstacle affects remaining path
             if pos in self.path[self.pathIndex:]:
@@ -75,7 +79,7 @@ class NavigationController:
     # -------------------------------
     def choose_target(self):            #isnt it belong in cleaning module?
         cx, cy = self.currentPosition
-
+        
         best = None
         best_dist = float('inf')
 
@@ -83,6 +87,7 @@ class NavigationController:
             for y in range(len(self.moduleMap.map[0])):
                 if self.moduleMap.map[x][y] == 1:
                     dist = abs(cx - x) + abs(cy - y)
+
                     if dist < best_dist:
                         best_dist = dist
                         best = (x, y)

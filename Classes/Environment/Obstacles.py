@@ -1,7 +1,7 @@
 # add shape to diagram
 # add getShape method to diagram
 # change size to int in diagram
-# add default_shape method to diagram
+# add makeShape method to diagram
 
 
 
@@ -16,9 +16,9 @@ class Obstacles:
         self._pos_x = posX
         self._pos_y = posY
         self._is_movable = isMovable
-        self._shape = shape if shape is not None else self.default_shape()
+        self._shape = shape if shape is not None else self.makeShape()
 
-    def default_shape(self) -> list[list[int]]:
+    def makeShape(self) -> list[list[int]]:
         if self._size <= 1:
             return [[2]]
         if self._size <= 2:
@@ -80,4 +80,4 @@ class Obstacles:
         return self._shape
 
     def move(self, posX: int, posY: int) -> None:
-        pass #TO-DO : implement logic for moving the obstacle if it is movable, and updating its position accordingly
+        pass #will not be implemented doe to time frame

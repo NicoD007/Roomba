@@ -1,6 +1,7 @@
 import pygame
-from typing import Tuple
-
+from typing import Optional, Tuple
+from RobotInternals.Sensor import Sensor
+from Core.ModuleMap import ModuleMap
 from RobotInternals.Battery import Battery
 
 
@@ -14,6 +15,7 @@ class CleaningModule(pygame.sprite.Sprite):
         self.direction: str = ""
         self.isActive: bool = False
         self.unFinishedCleaning: bool = False
+        self._sensor = Sensor(1)
         self._battery = Battery(joules=100, batteryPercentage=30)
 
         self.size = size
@@ -82,6 +84,10 @@ class CleaningModule(pygame.sprite.Sprite):
         return not self.isActive
 
     def scan(self) -> None:
+        
+        Sensor(1)
+        Sensor.Scan(self.currentLocation, ModuleMap.requestMap())
+
         pass
 
     def getBatteryLevel(self) -> float:

@@ -1,3 +1,11 @@
+import sys
+import os
+
+# Add Classes directory to sys.path for absolute imports
+classes_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if classes_path not in sys.path:
+    sys.path.insert(0, classes_path)
+
 import pygame
 
 from Environment.ChargingStation import ChargingStation
@@ -15,6 +23,7 @@ class SimulationEnvironment:
         title: str = "Simulation Environment",
         charging_station: ChargingStation | None = None,
         room_map: RoomMap | None = None,
+        cleaning_module: CleaningModule | None = None,
     ) -> None:
         self._window = None
         self._window_width = window_width
@@ -25,8 +34,8 @@ class SimulationEnvironment:
         self._running = False
         self._charging_station = charging_station
         self._room_map = room_map
+        self._cleaning_module = cleaning_module
         self._sprites = pygame.sprite.Group()
-        self._cleaning_module = None
         self._mqtt_client = None
         self._mqtt_connected = False
 
@@ -39,19 +48,32 @@ class SimulationEnvironment:
         self._clock = pygame.time.Clock()
         self._running = True
         
-        # Initialize room map if not provided
-        if self._room_map is None:
-            self._room_map = RoomMap(width=64, height=42, objects=[], numOfRooms=6)
+        # Calculate tile size based on the room map's maximum dimension
+        blueprint = getattr(self._room_map, '_blueprint', None)
+        if blueprint:
+            rows = len(blueprint)
+            cols = len(blueprint[0]) if blueprint[0] else 0
+            max_dim = max(rows, cols)
+            cell_width = self._window_width // max_dim if max_dim else 20
+            cell_height = self._window_height // max_dim if max_dim else 20
+            self._cell_size = min(cell_width, cell_height)
+        else:
+            self._cell_size = 30  # fallback
 
-        return True
+        # Add cleaning module to sprites if provided
+        if self._cleaning_module is not None:
+            self._sprites.add(self._cleaning_module)
 
-    def generate(self) -> bool:
-        if self._room_map is None:
-            return False
-        self._room_map.generate()
         return True
 
     def connect_mqtt(self) -> bool:
+        if self._cleaning_module is None:
+            self._mqtt_connected = False
+            return False
+
+        self._mqtt_client = MQTTClient(self._cleaning_module)
+        self._mqtt_connected = self._mqtt_client.connect()
+        return self._mqtt_connected
         if self._cleaning_module is None:
             self._mqtt_connected = False
             return False
@@ -95,17 +117,17 @@ class SimulationEnvironment:
         
         # Get the blueprint from room map
         blueprint = getattr(self._room_map, '_blueprint', None)
-        if blueprint is None:
+        if not blueprint:
             return
             
         # Calculate cell size to fit the map in the window
-        cell_width = self._window_width // len(blueprint[0]) if blueprint[0] else 20
-        cell_height = self._window_height // len(blueprint) if blueprint else 20
+        cell_width = self._window_width // len(blueprint)
+        cell_height = self._window_height // len(blueprint[0]) if blueprint[0] else 20
         cell_size = min(cell_width, cell_height)
         
         # Draw each cell
-        for y, row in enumerate(blueprint):
-            for x, cell in enumerate(row):
+        for x, column in enumerate(blueprint):
+            for y, cell in enumerate(column):
                 rect = pygame.Rect(x * cell_size, y * cell_size, cell_size, cell_size)
                 if cell == 1:  # Room floor
                     pygame.draw.rect(self._window, (100, 100, 100), rect)
@@ -165,8 +187,3 @@ class SimulationEnvironment:
            
 
         self.stop()
-
-
-if __name__ == "__main__":
-    env = SimulationEnvironment(window_width=900, window_height=650, fps=60)
-    env.run_demo()
