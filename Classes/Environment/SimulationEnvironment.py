@@ -1,14 +1,9 @@
-import sys
-import os
 import pygame
 
-# Add parent directory to path so we can import from Core and Environment
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from ChargingStation import ChargingStation
-from RoomMap import RoomMap
+from Environment.ChargingStation import ChargingStation
+from Environment.RoomMap import RoomMap
 from Core.CleaningModule import CleaningModule
-from Obstacles import Obstacles
+from Communication.MQTTClient import MQTTClient
 
 
 class SimulationEnvironment:
@@ -32,6 +27,8 @@ class SimulationEnvironment:
         self._room_map = room_map
         self._sprites = pygame.sprite.Group()
         self._cleaning_module = None
+        self._mqtt_client = None
+        self._mqtt_connected = False
 
     def initialize(self) -> bool:
         pygame.init()
@@ -45,15 +42,56 @@ class SimulationEnvironment:
         # Initialize room map if not provided
         if self._room_map is None:
             self._room_map = RoomMap(roomId=1, width=64, height=42, objects=[], numOfRooms=6)
-            self._room_map.generate()
+        self.generate()
+
+        # Initialize charging station if not provided
+        if self._charging_station is None:
+            self._charging_station = ChargingStation(stationPos=(50, 50), chargeRate=5.0)
         
         # Initialize cleaning module in top-left corner
         self._cleaning_module = CleaningModule(50, 50, 50)
         self._sprites.add(self._cleaning_module)
+
+        if not self.connect_mqtt():
+            print("Warning: MQTT client failed to connect.")
+            print("Fallback mode enabled: press S to start cleaning locally.")
+
+        print("Room is ready")
         
         return True
 
+    def generate(self) -> bool:
+        if self._room_map is None:
+            return False
+        return self._room_map.initialize()
+
+    def connect_mqtt(self) -> bool:
+        if self._cleaning_module is None:
+            self._mqtt_connected = False
+            return False
+
+        self._mqtt_client = MQTTClient(self._cleaning_module)
+        self._mqtt_connected = self._mqtt_client.connect()
+        return self._mqtt_connected
+
+    def publish_start_command(self) -> bool:
+        if self._mqtt_client is None or not self._mqtt_connected:
+            if self._cleaning_module is not None:
+                self._cleaning_module.startCleaning()
+                print("Fallback start: cleaning started locally.")
+                return True
+            return False
+
+        published = self._mqtt_client.publish_command("start")
+        if not published and self._cleaning_module is not None:
+            self._cleaning_module.startCleaning()
+            print("Fallback start: cleaning started locally.")
+            return True
+        return published
+
     def stop(self) -> bool:
+        if self._mqtt_client is not None:
+            self._mqtt_client.disconnect()
         self._running = False
         pygame.quit()
         return True
@@ -118,6 +156,9 @@ class SimulationEnvironment:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self._running = False
+                elif event.key == pygame.K_s:
+                    if self.publish_start_command():
+                        print("Published: start")
         return self._running
 
     def run_demo(self) -> None:

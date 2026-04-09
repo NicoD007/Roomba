@@ -8,15 +8,15 @@
 
 
 import random
-from Obstacles import Obstacles
-from Classes.Core.ModuleMap import ModuleMap
+from Environment.Obstacles import Obstacles
+from Core.ModuleMap import ModuleMap
 
 class RoomMap:
-    def __init__(self, roomId: int, width: int = 32, height: int = 32, objects: list = None, position: tuple = None, blueprint: list[list[int]] = None, numOfRooms: int = 6) -> None:
+    def __init__(self, roomId: int, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
         self._width = width
         self._height = height
         self._room_id = roomId # i think i will remove this, it doesent really make sense.
-        self._objects = objects
+        self._objects = objects if objects is not None else []
         self._position = position
         self._blueprint = blueprint
         self._objectlessBlueprint = list[list[int]]
@@ -134,6 +134,10 @@ class RoomMap:
                         map_x = obj_x + px
                         if 0 <= map_y < len(self._map) and 0 <= map_x < len(self._map[0]):
                             self._map[map_y][map_x] = 2
+
+    def initialize(self) -> bool:
+        self.generate()
+        return True
         
         
         self._blueprint = self._map        
@@ -147,12 +151,12 @@ class RoomMap:
     def removeObject(self, objects: list) -> None:
         pass #TO-DO : implement logic for removing an object from the room map
     
-    def pushMap(self, module_map=None) -> None:
+    def pushMap(self, module_map=None) -> ModuleMap:
         if module_map is None:
             # Create a new ModuleMap instance if one doesn't exist
             module_map = ModuleMap(
                 grid=self._map,
-                cleanedCell=set(),
+                cleanedCells=set(),
                 mapData=self._objectlessBlueprint
             )
         else:
