@@ -41,29 +41,15 @@ class SimulationEnvironment:
         
         # Initialize room map if not provided
         if self._room_map is None:
-            self._room_map = RoomMap(roomId=1, width=64, height=42, objects=[], numOfRooms=6)
-        self.generate()
+            self._room_map = RoomMap(width=64, height=42, objects=[], numOfRooms=6)
 
-        # Initialize charging station if not provided
-        if self._charging_station is None:
-            self._charging_station = ChargingStation(stationPos=(50, 50), chargeRate=5.0)
-        
-        # Initialize cleaning module in top-left corner
-        self._cleaning_module = CleaningModule(50, 50, 50)
-        self._sprites.add(self._cleaning_module)
-
-        if not self.connect_mqtt():
-            print("Warning: MQTT client failed to connect.")
-            print("Fallback mode enabled: press S to start cleaning locally.")
-
-        print("Room is ready")
-        
         return True
 
     def generate(self) -> bool:
         if self._room_map is None:
             return False
-        return self._room_map.initialize()
+        self._room_map.generate()
+        return True
 
     def connect_mqtt(self) -> bool:
         if self._cleaning_module is None:

@@ -1,21 +1,20 @@
 
-# should i move numOfRooms into __init__ ?
 # roomlist into diagram
 #remove posicion
 # change objects to obsticleList
 # remove roomid  
-# add furnished map to diagram and code
+# add _objectlessBlueprint to diagram and code
 
 
 import random
 from Environment.Obstacles import Obstacles
 from Core.ModuleMap import ModuleMap
+from Environment.ChargingStation import ChargingStation
 
 class RoomMap:
-    def __init__(self, roomId: int, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
+    def __init__(self, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
         self._width = width
         self._height = height
-        self._room_id = roomId # i think i will remove this, it doesent really make sense.
         self._objects = objects if objects is not None else []
         self._position = position
         self._blueprint = blueprint
@@ -80,7 +79,7 @@ class RoomMap:
                     self._map[y][x] = 1
 
         self._map[2][2] = 5
-
+        ChargingStation((2,2))
 
         #trimming unused rows and columns
         while self._map and sum(self._map[-1]) == 0:
@@ -134,18 +133,11 @@ class RoomMap:
                         map_x = obj_x + px
                         if 0 <= map_y < len(self._map) and 0 <= map_x < len(self._map[0]):
                             self._map[map_y][map_x] = 2
-
-    def initialize(self) -> bool:
-        self.generate()
-        return True
         
         
         self._blueprint = self._map        
 
 
-
-    def getRoomId(self) -> int:
-        return self._room_id
     def addObject(self, objects: list) -> None:
         pass #TO-DO : implement logic for adding an object to the room map
     def removeObject(self, objects: list) -> None:
