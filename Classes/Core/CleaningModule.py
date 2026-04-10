@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 from RobotInternals.Sensor import Sensor
 from Core.ModuleMap import ModuleMap
 from RobotInternals.Battery import Battery
+from Environment.RoomMap import RoomMap
 
 
 class CleaningModule(pygame.sprite.Sprite):
@@ -85,8 +86,10 @@ class CleaningModule(pygame.sprite.Sprite):
 
     def scan(self) -> None:
         
-        Sensor(1)
-        Sensor.Scan(self.currentLocation, ModuleMap.requestMap())
+        S = Sensor(1)
+        grid = getattr(RoomMap, 'blueprint')
+        location = self.currentLocation
+        S.Scan(location, grid)
 
         pass
 
