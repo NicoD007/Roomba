@@ -15,33 +15,26 @@ from Classes.Core.ModuleMap import ModuleMap
 
 def main() -> None:
     
-    window_width = 900
-    window_height = 650
-    blueprint = getattr(room_map, '_blueprint', None)
-    if blueprint:
-        rows = len(blueprint)
-        cols = len(blueprint[0]) if blueprint[0] else 0
-        max_dim = max(rows, cols)
-        cell_size = min(window_width // max_dim, window_height // max_dim)
-        window_width = cell_size * max_dim
-        window_height = cell_size * max_dim
-    else:
-        cell_size = 30  # fallback
-    
+    room_map = RoomMap(width=22, height=25, numOfRooms=4)
+    room_map.generate()
+
     module_map = room_map.pushMap(room_map._blueprint)
+
     path_planner = PathPlanner([], module_map)
     navigation = NavigationController(module_map, path_planner)
 
-    # start Roomba
-    start_pos = (cleaningmodule.x, cleaningmodule.y)
-    navigation.startNav(start_pos)
+    cleaningmodule = CleaningModule(30, 0, 0)
+    navigation.startNav((0, 0))
 
-    # Create simulation environment with the components
+    window_width = 800
+    window_height = 600
+
     env = SimulationEnvironment(
-        window_width=window_width,
-        window_height=window_height,
-        fps=60,
-    )
+        window_width = window_width,
+        window_height = window_height,
+        fps = 60,
+        navigation = navigation
+        )
 
     
 
