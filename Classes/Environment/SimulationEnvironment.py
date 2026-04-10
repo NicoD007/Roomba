@@ -113,6 +113,10 @@ class SimulationEnvironment:
             obstacles = self.sensor.Scan(next_pos, getattr(self._room_map, '_blueprint'))
             for obs in obstacles:
                 self.navigation.handleObstacle(obs)
+        
+        # Drain battery while moving (not at charging station)
+        if self._cleaning_module.currentLocation != (0, 0):
+            self._cleaning_module._battery.drain(0.016, rate_per_second=1.0)  # 0.016 ~ 1/60 second per frame
     
         return True
             
@@ -197,6 +201,43 @@ class SimulationEnvironment:
                 elif cell == 5:  #charging station
                     pygame.draw.rect(self._window, (245, 217, 10), rect)  # yollowww
                     pygame.draw.rect(self._window, (50, 50, 150), rect, 1)
+
+
+    def draw_battery(self) -> None:
+        """Display battery bar on the top right of the screen."""
+        if self._window is None or self._cleaning_module is None:
+            return
+        
+        battery_level = int(self._cleaning_module.getBatteryLevel())
+        is_charging = self._cleaning_module.currentLocation == (0, 0)
+        
+        # Bar dimensions
+        bar_width = 200
+        bar_height = 25
+        bar_x = self._window_width - bar_width - 10
+        bar_y = 10
+        
+        # Determine color: Green if charging, Yellow if draining
+        if is_charging:
+            bar_color = (0, 255, 0)  # Green
+        else:
+            bar_color = (255, 255, 0)  # Yellow
+        
+        # Draw background bar (dark)
+        pygame.draw.rect(self._window, (50, 50, 50), (bar_x, bar_y, bar_width, bar_height))
+        
+        # Draw filled portion
+        filled_width = int((battery_level / 100.0) * bar_width)
+        pygame.draw.rect(self._window, bar_color, (bar_x, bar_y, filled_width, bar_height))
+        
+        # Draw border
+        pygame.draw.rect(self._window, (200, 200, 200), (bar_x, bar_y, bar_width, bar_height), 2)
+        
+        # Draw percentage text
+        font = pygame.font.Font(None, 20)
+        battery_text = font.render(f"{battery_level}%", True, (255, 255, 255))
+        text_rect = battery_text.get_rect(center=(bar_x + bar_width // 2, bar_y + bar_height // 2))
+        self._window.blit(battery_text, text_rect)
 
 
     def update(self) -> float:

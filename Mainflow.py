@@ -19,7 +19,7 @@ def main() -> None:
     room_map = RoomMap(width=22, height=25, numOfRooms=4)
     room_map.generate()
 
-    module_map = room_map.pushMap(room_map._objectlessBlueprint)
+    module_map = room_map.pushMap(room_map._map)
 
     path_planner = PathPlanner([], module_map)
     navigation = NavigationController(module_map, path_planner)
