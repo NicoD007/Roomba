@@ -82,7 +82,7 @@ class NavigationController:
     # -------------------------------
     # HANDLE OBSTACLE
     # -------------------------------
-    def handle_obstacle(self, pos):     #isnt it belong in sensor and cleaning module?
+    def handleObstacle(self, pos):     #isnt it belong in sensor and cleaning module?
         x, y = pos
 
 
@@ -98,7 +98,7 @@ class NavigationController:
     # -------------------------------
     # TARGET SELECTION
     # -------------------------------
-    def choose_target(self):            #isnt it belong in cleaning module?
+    def chooseTarget(self):            #isnt it belong in cleaning module?
         cx, cy = self.currentPosition
        
         best = None
@@ -122,7 +122,7 @@ class NavigationController:
     # -------------------------------
     # CHARGING
     # -------------------------------
-    def find_charger(self):
+    def findCharger(self):
         for x in range(len(self.moduleMap.map)):
             for y in range(len(self.moduleMap.map[0])):
                 if self.moduleMap.map[x][y] == CHARGER:
@@ -130,21 +130,21 @@ class NavigationController:
         return None
 
 
-    def go_to_charge(self):
-        charger = self.find_charger()
+    def goToCharger(self):
+        charger = self.findCharger()
         if charger:
             self.chargingMode = True
             self.requestPath(charger)
 
 
-    def stop_charging_mode(self):
+    def stopChargingMode(self):
         self.chargingMode = False
 
 
     # -------------------------------
     # PATH MANAGEMENT
     # -------------------------------
-    def ensure_path(self):
+    def ensurePath(self):
         if self.chargingMode:
             return
 
@@ -160,8 +160,8 @@ class NavigationController:
     # -------------------------------
     # MAIN STEP
     # -------------------------------
-    def get_next_move(self):
-        self.ensure_path()
+    def getNextMove(self):
+        self.ensurePath()
 
 
         if not self.path or self.pathIndex >= len(self.path):
@@ -187,5 +187,5 @@ class NavigationController:
     # -------------------------------
     # STATUS
     # -------------------------------
-    def is_done_cleaning(self):
+    def isDoneCleaning(self):
         return not any(UNCLEANED in row for row in self.moduleMap.map)

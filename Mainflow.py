@@ -37,8 +37,7 @@ def main() -> None:
         Roommap = room_map,
         Modulemap = module_map
         )
-
-    
+   
 
     # Run the simulation
     env.run_demo()
