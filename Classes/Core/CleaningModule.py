@@ -8,7 +8,7 @@ from Environment.RoomMap import RoomMap
 # changes will be made: shanges cleaning module size from pixel to tiles
 
 class CleaningModule(pygame.sprite.Sprite):
-    def __init__(self, xpixel: int, ypixel: int, sizepixel: int = 50, xTileLocation: int = 0, yTileLocation: int = 0) -> None:
+    def __init__(self, xpixelLocation: int, ypixelLocation: int, sizepixel: int = 50, xTileLocation: int = 0, yTileLocation: int = 0) -> None:
         super().__init__()
 
         self.moduleID: int = None
@@ -22,7 +22,7 @@ class CleaningModule(pygame.sprite.Sprite):
 
         self.size = sizepixel
         self.image = self._draw_roomba(sizepixel)
-        self.rect = self.image.get_rect(center=(xpixel, ypixel))
+        self.rect = self.image.get_rect(center=(xpixelLocation, ypixelLocation))
 
     def _draw_roomba(self, size: int) -> pygame.Surface:
         surface = pygame.Surface((size, size), pygame.SRCALPHA)

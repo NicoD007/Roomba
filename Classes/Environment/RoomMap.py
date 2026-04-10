@@ -11,7 +11,6 @@ import random
 from Environment.Obstacles import Obstacles
 from Core.ModuleMap import ModuleMap
 from Environment.ChargingStation import ChargingStation
-from Core.CleaningModule import CleaningModule
 
 class RoomMap:
     def __init__(self, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
@@ -171,7 +170,7 @@ class RoomMap:
 
         
         # Create charging station
-        charging_station = ChargingStation(stationPos=(400, 300))
+        charging_station = ChargingStation((0, 0),_,True)
         print("Charging station created")
         
         

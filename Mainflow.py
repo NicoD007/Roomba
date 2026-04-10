@@ -15,12 +15,9 @@ from Classes.Core.ModuleMap import ModuleMap
 
 
 def main() -> None:
-    # Create room map
-    room_map = RoomMap(width=22, height=25, objects=[], numOfRooms=4)
-    room_map.generate()
-    print("Room map generated")
+    
 
-    # Calculate cell size based on map dimensions and make the window square
+    
     window_width = 900
     window_height = 650
     blueprint = getattr(room_map, '_blueprint', None)
@@ -51,9 +48,6 @@ def main() -> None:
         window_width=window_width,
         window_height=window_height,
         fps=60,
-        charging_station=charging_station,
-        room_map=room_map,
-        cleaning_module=cleaning_module
     )
 
     # Run the simulation
