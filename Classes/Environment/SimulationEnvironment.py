@@ -93,14 +93,14 @@ class SimulationEnvironment:
             return
         
         # Move the ROOMBA
-        self._cleaning_module.move_to(next_pos)
+        self._cleaning_module.moveTo(next_pos)
 
         # Update robot position in the map
         self._room_map.map[next_pos[0]][next_pos[1]] = ROBOT  # Mark as robot's current position
 
         # Sensor handling
         if self.sensor:
-            obstacles = self.sensor.scan(next_pos, self._room_map._map)
+            obstacles = self.sensor.Scan(next_pos, self._room_map._map)
 
             for obs in obstacles:
                 self.navigation.handle_obstacle(obs)
