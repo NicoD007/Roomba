@@ -65,7 +65,7 @@ class SimulationEnvironment:
         self._clock = pygame.time.Clock()
         self._running = True
         # Calculate tile size based on the room map's maximum dimension
-        blueprint = getattr(self._room_map, '_blueprint', None)
+        blueprint = getattr(self._module_map, 'map', None)
         if blueprint:
             rows = len(blueprint)
             cols = len(blueprint[0]) if blueprint[0] else 0
@@ -111,7 +111,6 @@ class SimulationEnvironment:
         # Sensor handling
         if self.sensor:
             obstacles = self.sensor.Scan(next_pos, getattr(self._room_map, '_blueprint'))
-
             for obs in obstacles:
                 self.navigation.handleObstacle(obs)
         
@@ -160,12 +159,12 @@ class SimulationEnvironment:
         if self._window is not None:
             self._window.fill(color)
 
-    def draw_room_map(self) -> None:
-        if self._window is None or self._room_map is None:
+    def draw_module_map(self) -> None:
+        if self._window is None or self._module_map is None:
             return
         
         # Get the blueprint from room map
-        blueprint = getattr(self._room_map, '_blueprint', None)
+        blueprint = getattr(self._module_map, 'map', None)
         if not blueprint:
             return
             
@@ -226,8 +225,8 @@ class SimulationEnvironment:
         while self._running:
             self.handle_events()
             self.clear((20, 20, 20))
-            # Draw room map
-            self.draw_room_map()
+            # Draw module map
+            self.draw_module_map()
             
             # Draw all sprites
             if self._window is not None:
