@@ -43,6 +43,8 @@ def main() -> None:
         fps=60,
     )
 
+    
+
     # Run the simulation
     env.run_demo()
 
