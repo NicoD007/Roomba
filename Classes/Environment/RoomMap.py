@@ -169,10 +169,7 @@ class RoomMap:
 ######################################################################## this will be changed
         
 
-        # Create cleaning module
-        cleaning_module = CleaningModule(x=cell_size//2, y=cell_size//2, size=cell_size)
-        print("Cleaning module created")
-
+        
         # Create charging station
         charging_station = ChargingStation(stationPos=(400, 300))
         print("Charging station created")
