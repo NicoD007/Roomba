@@ -113,7 +113,7 @@ class CleaningModule(pygame.sprite.Sprite):
 
     def moveTo(self, target: Tuple[int, int]) -> None:
         self.setPosition(target[0], target[1])
-        self.updateSpritePosition(self.tile_size)
+        self.updateSpritePosition(self.tileSize)
 
     def updateSpritePosition(self, cell_size: int):
         tile_x, tile_y = self.currentLocation

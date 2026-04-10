@@ -102,6 +102,7 @@ class SimulationEnvironment:
         
         # Move the ROOMBA
         self._cleaning_module.moveTo(next_pos)
+        self._cleaning_
 
         # Update robot position in the map
         self._module_map.updateCell(self._cleaning_module.currentLocation, ROBOT)  # Mark as robot's current position
