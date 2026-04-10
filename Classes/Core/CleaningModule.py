@@ -8,11 +8,11 @@ from Environment.RoomMap import RoomMap
 # changes will be made: shanges cleaning module size from pixel to tiles
 
 class CleaningModule(pygame.sprite.Sprite):
-    def __init__(self, x: int, y: int, size: int = 50):
+    def __init__(self, xpixel: int, ypixel: int, sizepixel: int = 50, xTileLocation: int = 0, yTileLocation: int = 0) -> None:
         super().__init__()
 
         self.moduleID: int = None
-        self.currentLocation: Tuple[int, int] = (x, y)
+        self.currentLocation: Tuple[int, int] = (xTileLocation, yTileLocation)
         self.speed: int = 0
         self.direction: str = ""
         self.isActive: bool = False
@@ -20,9 +20,9 @@ class CleaningModule(pygame.sprite.Sprite):
         #self._sensor = Sensor(1)
         self._battery = Battery(joules=100, batteryPercentage=30)
 
-        self.size = size
-        self.image = self._draw_roomba(size)
-        self.rect = self.image.get_rect(center=(x, y))
+        self.size = sizepixel
+        self.image = self._draw_roomba(sizepixel)
+        self.rect = self.image.get_rect(center=(xpixel, ypixel))
 
     def _draw_roomba(self, size: int) -> pygame.Surface:
         surface = pygame.Surface((size, size), pygame.SRCALPHA)
@@ -75,7 +75,6 @@ class CleaningModule(pygame.sprite.Sprite):
 
     def setPosition(self, x: int, y: int) -> None:
         self.currentLocation = (x, y)
-        self.rect.center = (x, y)
 
     def startCleaning(self) -> bool:
         self.isActive = True

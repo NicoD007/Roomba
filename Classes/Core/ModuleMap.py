@@ -11,7 +11,7 @@ class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows?
         self._cleaned_cell = cleanedCells
         self.map = mapData
 
-    def updateObstacles(self, obstacleLocation) -> None:
+    def updateMap(self, obstacleLocation) -> None:
         x, y = obstacleLocation
         self.map[x][y] = 4
 
