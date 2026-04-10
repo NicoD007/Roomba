@@ -22,7 +22,7 @@ class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows?
         self.map = mapData
 
 
-    def updateObstacles(self, obstacleLocation) -> None:
+    def updateMap(self, obstacleLocation) -> None:
         x, y = obstacleLocation
         self.map[x][y] = OBSTACLE
 
