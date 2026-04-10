@@ -113,6 +113,11 @@ class CleaningModule(pygame.sprite.Sprite):
 
     def moveTo(self, target: Tuple[int, int]) -> None:
         self.setPosition(target[0], target[1])
+        # Convert tile → pixel
+        px = target[0] * self.tile_size
+        py = target[1] * self.tile_size
+
+        self.rect.topleft = (px, py)
 
     def temp(self) -> None:
         #used to see if something compiles, ignore
