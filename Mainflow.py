@@ -31,7 +31,7 @@ def main() -> None:
         cell_size = 30  # fallback
 
     # Create cleaning module
-    cleaning_module = CleaningModule(x=cell_size//5, y=cell_size//2, size=cell_size)
+    cleaning_module = CleaningModule(x=cell_size//2, y=cell_size//2, size=cell_size)
     print("Cleaning module created")
 
     # Create charging station
