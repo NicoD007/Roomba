@@ -6,8 +6,8 @@ class Battery:
 
     def __init__(self, joules: int, batteryPercentage: int) -> None:
         self._joules = joules
-        self._battery_percentage = max(0, min(self.FULL_LEVEL, batteryPercentage))
-        self._drain_accumulator = 0.0
+        self._batteryPercentage = max(0, min(self.FULL_LEVEL, batteryPercentage))
+        self._drainAccumulator = 0.0
 
     def getLevel(self) -> int:
         return self._battery_percentage
@@ -28,13 +28,13 @@ class Battery:
 
         drain_amount = int(self._drain_accumulator)
         self._drain_accumulator -= drain_amount
-        self.set_level(self._battery_percentage - drain_amount)
+        self.setLevel(self._battery_percentage - drain_amount)
         return self._battery_percentage
 
     def charge(self, duration: float, charge_rate: float = 5.0) -> int:
-        if duration <= 0 or self.is_full():
+        if duration <= 0 or self.isFull():
             return self._battery_percentage
 
         new_level = int(round(self._battery_percentage + (charge_rate * duration)))
-        self.set_level(new_level)
+        self.setLevel(new_level)
         return self._battery_percentage
