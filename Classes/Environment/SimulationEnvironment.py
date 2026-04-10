@@ -218,6 +218,8 @@ class SimulationEnvironment:
             self.clear((20, 20, 20))
             # Draw room map
             self.draw_room_map()
+            self.step()
+            
             # Draw all sprites
             if self._window is not None:
                 self._sprites.draw(self._window)
