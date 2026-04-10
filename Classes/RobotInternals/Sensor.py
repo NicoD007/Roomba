@@ -17,7 +17,7 @@ class Sensor:
                     cells.append((x, y))
 
         return cells
-
+    '''
     # -------------------------------
     # DIRT SCAN
     # -------------------------------
@@ -30,11 +30,11 @@ class Sensor:
                 dirt_cells.append((x, y))
 
         return dirt_cells
-
+    '''
     # -------------------------------
     # OBSTACLE SCAN
     # -------------------------------
-    def obstacleScan(self, position, grid):
+    def Scan(self, position, grid):
         cells = self._get_cells_in_radius(position, grid)
 
         obstacle_cells = []

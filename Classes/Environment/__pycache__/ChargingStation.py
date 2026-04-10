@@ -4,18 +4,11 @@ from Core.CleaningModule import CleaningModule
 class ChargingStation:
     "Represents the robot's charging station."
 
-    def __init__(self, stationPos: tuple[int, int], chargeRate: float = 5.0, isOccupied: bool = False, *args, **kwargs) -> None:
-        # Allow both explicit isOccupied keyword arguments and positional occupancy arguments.
-        if isinstance(chargeRate, bool) and not args and 'isOccupied' not in kwargs:
-            isOccupied = chargeRate
-            chargeRate = 5.0
-
+    def __init__(self, stationPos: tuple[int, int], chargeRate: float = 5.0) -> None:
         # stationPos is the fixed map position where the robot can charge.
         self.stationPos = stationPos
         # chargeRate is the amount of battery percentage added per second.
-        self._chargeRate = float(chargeRate)
-        # isOccupied indicates whether the charging station is currently in use.
-        self._isOccupied = bool(isOccupied)
+        self._chargeRate = chargeRate
 
     def getChargeRate(self) -> float:
         # Simple accessor for the charging speed.

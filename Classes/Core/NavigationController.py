@@ -15,7 +15,7 @@ class NavigationController:
         self.pathPlanner = PathPlanner
 
         self.startLocation = None
-        self.currentPosition = None
+        self.currentPosition = (0,0)
         self.targetLocation = None
 
         self.path = []
@@ -84,7 +84,7 @@ class NavigationController:
     # -------------------------------
     def choose_target(self):            #isnt it belong in cleaning module?
         cx, cy = self.currentPosition
-
+        
         best = None
         best_dist = float('inf')
 
@@ -92,6 +92,7 @@ class NavigationController:
             for y in range(len(self.moduleMap.map[0])):
                 if self.moduleMap.map[x][y] == 1:
                     dist = abs(cx - x) + abs(cy - y)
+
                     if dist < best_dist:
                         best_dist = dist
                         best = (x, y)

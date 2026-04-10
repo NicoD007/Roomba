@@ -11,16 +11,31 @@ CHARGER = 5
 class PathPlanner:
     "This class handles the path planning logic for the roomba using a greedy approach."
 
-    def __init__(self, currentPath, mapData) -> None:
+    def __init__(self, currentPath, moduleMap=None) -> None:
         self._current_path = currentPath or []
-        self._map = mapData
+
+        # Keep a ModuleMap reference so PathPlanner can explicitly requestMap().
+        if moduleMap is not None:
+            self._module_map = moduleMap
+        else:
+            self._module_map = ModuleMap([], [])
+
+        self._map = self._module_map.requestMap()
 
         self._visit_count = {}  # prevent loops
+
+    # -------------------------------
+    # MAP REQUEST (diagram flow)
+    # -------------------------------
+    def requestMap(self):
+        self._map = self._module_map.requestMap()
+        return self._map
 
     # -------------------------------
     # PUBLIC: PATH TO CHARGER
     # -------------------------------
     def findPathToChargingstation(self, start: tuple[int, int]):
+        self.requestMap()
         charger = self._find_charger()
 
         if charger:
@@ -81,9 +96,9 @@ class PathPlanner:
     def updateMap(self, new_map=None) -> None:
         if new_map is not None:
             self._map = new_map
+            if hasattr(self._module_map, "map"):
+                self._module_map.map = new_map
 
-    def readMap(self):
-        return self._map
 
     # -------------------------------
     # INTERNAL: FIND CHARGER
@@ -157,7 +172,7 @@ class PathPlanner:
         return self._map[x][y] not in [WALL, OBSTACLE]
 
     # -------------------------------
-    # NEIGHBORS
+    # Surrounding cells
     # -------------------------------
     def _get_neighbors(self, pos):
         x, y = pos

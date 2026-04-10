@@ -10,33 +10,50 @@
 import random
 from Environment.Obstacles import Obstacles
 from Core.ModuleMap import ModuleMap
+from Environment.ChargingStation import ChargingStation
+from Core.CleaningModule import CleaningModule
 
 class RoomMap:
-    def __init__(self, roomId: int, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
+    def __init__(self, width: int = 32, height: int = 32, objects: list | None = None, position: tuple | None = None, blueprint: list[list[int]] | None = None, numOfRooms: int = 6) -> None:
         self._width = width
         self._height = height
-        self._room_id = roomId # i think i will remove this, it doesent really make sense.
         self._objects = objects if objects is not None else []
         self._position = position
         self._blueprint = blueprint
-        self._objectlessBlueprint = list[list[int]]
+        self._objectlessBlueprint = []
         self._rooms = []  # [(start_x, start_y, end_x, end_y, room_id), ...]
         self._numOfRooms = numOfRooms
 
-
-    def generate(self) -> None:
-        self._map = [[0 for _ in range(self._width)] for _ in range(self._height)]
+    def addObject(self, objects: list) -> None:
+        pass #TO-DO : implement logic for adding an object to the room map
+    def removeObject(self, objects: list) -> None:
+        pass #TO-DO : implement logic for removing an object from the room map
+    
+    def pushMap(self, MapToPush, module_map=None) -> ModuleMap:
+        if module_map is None:
+            # Create a new ModuleMap instance if one doesn't exist
+            module_map = ModuleMap(
+                cleanedCells=set(),
+                mapData=MapToPush
+            )
+        else:
+            # Update existing module_map
+            module_map.map = MapToPush
+        return module_map
+    
+    def generate(self) -> bool:
+        self._map = [[0 for _ in range(self._height)] for _ in range(self._width)]
         room_id = 0
         numOfRooms = self._numOfRooms
         # get first room coordinates
-        room1_x = random.randint(0,  self._width//2)
-        room1_y = random.randint(0,  self._height//2)
+        room1_x = random.randint(0, self._height // 2)
+        room1_y = random.randint(0, self._width // 2)
         self._rooms.append((0, 0, room1_x, room1_y, room_id))
         
         # Fill first room with 1s
-        for x in range(0, room1_x + 1):
-            for y in range(0, room1_y + 1):
-                self._map[y][x] = 1
+        for y in range(0, room1_y + 1):
+            for x in range(0, room1_x + 1):
+                self._map[x][y] = 1
         
         # create the remaining rooms
         for i in range(numOfRooms):
@@ -72,17 +89,17 @@ class RoomMap:
             # Fill room thith 1s
             for x in range(new_room_start_x, new_room_end_x + 1):
                 for y in range(new_room_start_y, new_room_end_y + 1):
-                    self._map[y][x] = 1
+                    self._map[x][y] = 1
 
         # place safe zone and charging station
         for x in range(5):
-                for y in range(5):
-                    self._map[y][x] = 1
+            for y in range(5):
+                self._map[x][y] = 1
 
-        self._map[2][2] = 5
+        self._map[0][0] = 5
 
 
-        #trimming unused rows and columns
+        # trimming unused rows and columns # dammint shaun I made this bc you commplained
         while self._map and sum(self._map[-1]) == 0:
             self._map.pop()
         # Trim columns from right
@@ -94,14 +111,17 @@ class RoomMap:
         self._width = len(self._map[0]) if self._map else 0
 
 
+
+
         
-        self._objectlessBlueprint = self._blueprint
+        self._objectlessBlueprint = [row[:] for row in self._map]
+        self.pushMap(self._objectlessBlueprint)
 
 
         # Create obstacles
         for room in self._rooms:
             start_x, start_y, end_x, end_y, room_id = room
-            for _ in range(random.randint(0, 5)):  # Random number of objects per room
+            for _ in range(random.randint(0, 3)):  # Random number of objects per room
                 obj_x = random.randint(start_x, end_x)
                 obj_y = random.randint(start_y, end_y)
                 # Create an Obstacle instance and add to objects list
@@ -113,7 +133,7 @@ class RoomMap:
                     check_y = obj_y + size - 1
                     
                     # Verify position is within bounds and on a room tile
-                    if check_x < len(self._map[0]) and check_y < len(self._map) and self._map[check_y][check_x] == 1:
+                    if check_x < len(self._map) and check_y < len(self._map[0]) and self._map[check_x][check_y] == 1:
                         break  # Valid placement found
                     
                     size -= 1
@@ -127,39 +147,36 @@ class RoomMap:
             pattern = obstacle.getShape()
             obj_x, obj_y = obstacle.getPosition()
             # Draw the pattern onto the map
-            for py in range(len(pattern)):
-                for px in range(len(pattern[0])):
-                    if pattern[py][px] == 2:
-                        map_y = obj_y + py
+            for px in range(len(pattern)):
+                for py in range(len(pattern[0])):
+                    if pattern[px][py] == 2:
                         map_x = obj_x + px
-                        if 0 <= map_y < len(self._map) and 0 <= map_x < len(self._map[0]):
-                            self._map[map_y][map_x] = 2
+                        map_y = obj_y + py
+                        if 0 <= map_y < len(self._map[0]) and 0 <= map_x < len(self._map):
+                            self._map[map_x][map_y] = 2
 
-    def initialize(self) -> bool:
-        self.generate()
-        return True
+        # Place back safe zone and charging station if obstacles replaced them
+        for x in range(5):
+            for y in range(5):
+                self._map[x][y] = 1
+
+        self._map[0][0] = 5
+        print("Room map generated")
+
+
+#######################################################################################################x
+##################################################################################################
+######################################################################## this will be changed
+        
+
+        # Create cleaning module
+        cleaning_module = CleaningModule(x=cell_size//2, y=cell_size//2, size=cell_size)
+        print("Cleaning module created")
+
+        # Create charging station
+        charging_station = ChargingStation(stationPos=(400, 300))
+        print("Charging station created")
         
         
-        self._blueprint = self._map        
-
-
-
-    def getRoomId(self) -> int:
-        return self._room_id
-    def addObject(self, objects: list) -> None:
-        pass #TO-DO : implement logic for adding an object to the room map
-    def removeObject(self, objects: list) -> None:
-        pass #TO-DO : implement logic for removing an object from the room map
-    
-    def pushMap(self, module_map=None) -> ModuleMap:
-        if module_map is None:
-            # Create a new ModuleMap instance if one doesn't exist
-            module_map = ModuleMap(
-                grid=self._map,
-                cleanedCells=set(),
-                mapData=self._objectlessBlueprint
-            )
-        else:
-            # Update existing module_map
-            module_map.map = self._objectlessBlueprint
-        return module_map
+        self._blueprint = self._map 
+        return(True)       

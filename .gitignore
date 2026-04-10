@@ -1,0 +1,10 @@
+*.pyc
+*.pyc
+*.pyc
+Classes/Environment/__pycache__/ChargingStation.cpython-312.pyc
+*.pyc
+*.pyc
+*.pyc
+/Classes/Core/__pycache__
+/Classes/Environment/__pycache__
+/Classes/Environment/__pycache__
