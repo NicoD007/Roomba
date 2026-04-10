@@ -13,10 +13,7 @@ from Classes.Core.NavigationController import NavigationController
 from Classes.Core.PathPlanner import PathPlanner
 from Classes.Core.ModuleMap import ModuleMap
 
-
 def main() -> None:
-    
-
     
     window_width = 900
     window_height = 650
@@ -31,11 +28,13 @@ def main() -> None:
     else:
         cell_size = 30  # fallback
     
-
+    module_map = room_map.pushMap(room_map._blueprint)
+    path_planner = PathPlanner([], module_map)
+    navigation = NavigationController(module_map, path_planner)
 
     # start Roomba
     start_pos = (cleaningmodule.x, cleaningmodule.y)
-    NavigationController.startNav(start_pos)
+    navigation.startNav(start_pos)
 
     # Create simulation environment with the components
     env = SimulationEnvironment(
@@ -46,8 +45,6 @@ def main() -> None:
 
     # Run the simulation
     env.run_demo()
-
-
 
 if __name__ == "__main__":
     main()
