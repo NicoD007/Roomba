@@ -271,7 +271,9 @@ class SimulationEnvironment:
         if not self.initialize():
             print("Failed to initialize simulation environment")
             return
-        self.state = 1
+
+        self.connect_mqtt()
+
         while self._running:
             self.handle_events()
             self.clear((20, 20, 20))
@@ -287,8 +289,9 @@ class SimulationEnvironment:
             
             dt = self.update() #dt will be used for charging per second and for drain
 
-            if not self.step():
-                break
+            if self._cleaning_module is not None and self._cleaning_module.isActive:
+                if not self.step():
+                    break
             
         print("Simulation ended.")
         self.stop()
