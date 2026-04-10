@@ -5,6 +5,7 @@ from Core.ModuleMap import ModuleMap
 from RobotInternals.Battery import Battery
 from Environment.RoomMap import RoomMap
 
+# changes will be made: shanges cleaning module size from pixel to tiles
 
 class CleaningModule(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int, size: int = 50):
