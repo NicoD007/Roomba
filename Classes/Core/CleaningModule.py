@@ -94,7 +94,7 @@ class CleaningModule(pygame.sprite.Sprite):
         return S.Scan(location, grid)
 
     def getBatteryLevel(self) -> float:
-        return float(self._battery.checkBattery())
+        return float(self._battery.getLevel())
 
     def noActionTimer(self) -> None:
         pass

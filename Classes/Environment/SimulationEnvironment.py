@@ -160,6 +160,16 @@ class SimulationEnvironment:
         if self._window is not None:
             self._window.fill(color)
 
+    def draw_battery(self) -> None:        #NEW METHODS
+        """Display battery percentage on the top left of the screen."""
+        if self._window is None or self._cleaning_module is None:
+            return
+        
+        battery_level = int(self._cleaning_module.getBatteryLevel())
+        font = pygame.font.Font(None, 36)
+        battery_text = font.render(f"Battery: {battery_level}%", True, (0, 255, 0))
+        self._window.blit(battery_text, (10, 10))
+
     def draw_room_map(self) -> None:
         if self._window is None or self._room_map is None:
             return
@@ -232,6 +242,10 @@ class SimulationEnvironment:
             # Draw all sprites
             if self._window is not None:
                 self._sprites.draw(self._window)
+            
+            # Draw battery on top left
+            self.draw_battery()
+            
             dt = self.update() #dt will be used for charging per second and for drain
 
             self.step()
