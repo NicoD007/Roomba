@@ -95,7 +95,10 @@ class SimulationEnvironment:
         if next_pos is None:
             return
         
-        self._module_map.updateCell(self._cleaning_module.currentLocation, CLEANED)  # Mark as robot's current position
+        if self._cleaning_module.currentLocation == (0,0):
+            self._module_map.updateCell(self._cleaning_module.currentLocation, CHARGER)  # Mark as robot's current position
+        else:
+            self._module_map.updateCell(self._cleaning_module.currentLocation, CLEANED)  # Mark as robot's current position
         
         # Move the ROOMBA
         self._cleaning_module.moveTo(next_pos)
