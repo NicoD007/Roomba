@@ -112,6 +112,8 @@ class CleaningModule(pygame.sprite.Sprite):
         return self.stop()
 
     def moveTo(self, target: Tuple[int, int]) -> None:
+        if target is None:
+            return
         self.setPosition(target[0], target[1])
         self.updateSpritePosition(self.tileSize)
 

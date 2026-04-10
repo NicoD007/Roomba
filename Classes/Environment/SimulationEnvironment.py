@@ -55,6 +55,7 @@ class SimulationEnvironment:
         self._mqtt_connected = False
         self.navigation = navigation
         self.sensor = sensor
+        self.state = 0 #int 0 idle; 1 cleaning; 2 returning;
 
     def initialize(self) -> bool:
         pygame.init()
@@ -93,7 +94,10 @@ class SimulationEnvironment:
         next_pos = self.navigation.getNextMove()
         print(f"Next position: {next_pos}")
         if next_pos is None:
-            return(False)
+            if self.state == 2:
+                return False  # End simulation when charger is reached
+            else:
+                self.state=2
         
         if self._cleaning_module.currentLocation == (0,0):
             self._module_map.updateCell(self._cleaning_module.currentLocation, CHARGER)  # Mark as robot's current position
@@ -107,14 +111,17 @@ class SimulationEnvironment:
         # Update robot position in the map
         self._module_map.updateCell(self._cleaning_module.currentLocation, ROBOT)  # Mark as robot's current position
         
+        if self.state == 0:
+            print("State: Idle")
+        elif self.state == 1:
+            # Sensor handling
+            if self.sensor:
+                obstacles = self.sensor.Scan(next_pos, getattr(self._room_map, '_blueprint'))
+                for obs in obstacles:
+                    self.navigation.handleObstacle(obs)
+        elif self.state == 2:
+            self.navigation.goToCharger()
 
-        # Sensor handling
-        if self.sensor:
-            obstacles = self.sensor.Scan(next_pos, getattr(self._room_map, '_blueprint'))
-            for obs in obstacles:
-                self.navigation.handleObstacle(obs)
-        
-        # Drain battery while moving (not at charging station)
         if self._cleaning_module.currentLocation != (0, 0):
             self._cleaning_module._battery.drain(0.016, rate_per_second=1.0)  # 0.016 ~ 1/60 second per frame
     
@@ -264,7 +271,7 @@ class SimulationEnvironment:
         if not self.initialize():
             print("Failed to initialize simulation environment")
             return
-
+        self.state = 1
         while self._running:
             self.handle_events()
             self.clear((20, 20, 20))
@@ -282,5 +289,6 @@ class SimulationEnvironment:
 
             if not self.step():
                 break
+            
         print("Simulation ended.")
         self.stop()
