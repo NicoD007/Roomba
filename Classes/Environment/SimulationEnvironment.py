@@ -37,7 +37,7 @@ class SimulationEnvironment:
         self._clock = None
         self._running = False
         self._room_map = RoomMap(width=22, height=25, objects=[], numOfRooms=4)
-        self._cleaning_module = CleaningModule(30,30,30,0,0) #initialize cleaning module with default values
+        self._cleaning_module = CleaningModule(30,0,0) #initialize cleaning module with default values
         self._sprites = pygame.sprite.Group()
         self._mqtt_client = None
         self._mqtt_connected = False
@@ -65,9 +65,8 @@ class SimulationEnvironment:
         else:
             self._cell_size = 30  # fallback
         '''add cleaning module size here somehow'''
-        setattr(CleaningModule, 'xpixelLocation', self._cell_size // 2)
-        setattr(CleaningModule, 'ypixelLocation', self._cell_size // 2)
-        setattr(CleaningModule, 'sizepixel', self._cell_size)
+        
+        setattr(CleaningModule, 'tileSize', self._cell_size)
 
         # Add cleaning module to sprites if provided
         if self._cleaning_module is not None:
