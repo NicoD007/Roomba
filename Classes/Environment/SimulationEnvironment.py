@@ -85,15 +85,15 @@ class SimulationEnvironment:
 
         return True
 
-    def step(self):
+    def step(self) -> bool:
         if not self.navigation:
-            return
+            return(False)
         
         # ask for the next move from navigation controller
         next_pos = self.navigation.getNextMove()
-
+        print(f"Next position: {next_pos}")
         if next_pos is None:
-            return
+            return(False)
         
         if self._cleaning_module.currentLocation == (0,0):
             self._module_map.updateCell(self._cleaning_module.currentLocation, CHARGER)  # Mark as robot's current position
@@ -113,7 +113,9 @@ class SimulationEnvironment:
             obstacles = self.sensor.Scan(next_pos, getattr(self._room_map, '_blueprint'))
             for obs in obstacles:
                 self.navigation.handleObstacle(obs)
-        
+    
+        return True
+            
     def connect_mqtt(self) -> bool:
         if self._cleaning_module is None:
             self._mqtt_connected = False
@@ -237,7 +239,7 @@ class SimulationEnvironment:
             
             dt = self.update() #dt will be used for charging per second and for drain
 
-            self.step()
-           
-
+            if not self.step():
+                break
+        print("Simulation ended.")
         self.stop()
