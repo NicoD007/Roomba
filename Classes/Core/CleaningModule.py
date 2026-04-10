@@ -17,7 +17,7 @@ class CleaningModule(pygame.sprite.Sprite):
         self.direction: str = ""
         self.isActive: bool = False
         self.unFinishedCleaning: bool = False
-        #self._sensor = Sensor(1)
+        self._sensor = Sensor(1)
         self._battery = Battery(joules=100, batteryPercentage=30)
 
         self.size = sizepixel

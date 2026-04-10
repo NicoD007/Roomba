@@ -42,9 +42,9 @@ class PathPlanner:
     # -------------------------------
     # PUBLIC: PATH TO CHARGER
     # -------------------------------
-    def findPathToChargingstation(self, start: tuple[int, int]):
+    def findPathToChargingStation(self, start: tuple[int, int]):
         self.requestMap()
-        charger = self._find_charger()
+        charger = self._findCharger()
 
 
         if charger:
@@ -91,7 +91,7 @@ class PathPlanner:
                 break
 
 
-            next_move = self._get_best_neighbor(current, target)
+            next_move = self._getBestNeighbor(current, target)
 
 
             if next_move is None:
@@ -131,7 +131,7 @@ class PathPlanner:
     # -------------------------------
     # INTERNAL: FIND CHARGER
     # -------------------------------
-    def _find_charger(self):
+    def _findCharger(self):
         for x in range(len(self._map)):
             for y in range(len(self._map[0])):
                 if self._map[x][y] == CHARGER:
@@ -142,8 +142,8 @@ class PathPlanner:
     # -------------------------------
     # INTERNAL: BEST NEIGHBOR (CORE LOGIC)
     # -------------------------------
-    def _get_best_neighbor(self, pos, target):
-        neighbors = self._get_neighbors(pos)
+    def _getBestNeighbor(self, pos, target):
+        neighbors = self._getNeighbors(pos)
 
 
         best = None
@@ -151,11 +151,11 @@ class PathPlanner:
 
 
         for n in neighbors:
-            if not self._is_walkable(n):
+            if not self._isWalkable(n):
                 continue
 
 
-            score = self._evaluate_cell(n, target)
+            score = self._evaluateCell(n, target)
 
 
             if score > best_score:
@@ -169,7 +169,7 @@ class PathPlanner:
     # -------------------------------
     # CELL EVALUATION (WEIGHTS)
     # -------------------------------
-    def _evaluate_cell(self, pos, target):
+    def _evaluateCell(self, pos, target):
         x, y = pos
         cell = self._map[x][y]
 
@@ -201,7 +201,7 @@ class PathPlanner:
     # -------------------------------
     # WALKABLE CHECK
     # -------------------------------
-    def _is_walkable(self, pos):
+    def _isWalkable(self, pos):
         x, y = pos
 
 
@@ -217,7 +217,7 @@ class PathPlanner:
     # -------------------------------
     # Surrounding cells
     # -------------------------------
-    def _get_neighbors(self, pos):
+    def _getNeighbors(self, pos):
         x, y = pos
         return [
             (x+1, y),

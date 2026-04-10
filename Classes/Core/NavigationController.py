@@ -13,8 +13,8 @@ CHARGER = 5
 
 class NavigationController:
     def __init__(self, moduleMap, pathPlanner):
-        self.moduleMap = ModuleMap
-        self.pathPlanner = PathPlanner
+        self.moduleMap = moduleMap
+        self.pathPlanner = pathPlanner
 
 
         self.startLocation = None
