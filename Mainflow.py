@@ -23,7 +23,7 @@ def main() -> None:
     path_planner = PathPlanner([], module_map)
     navigation = NavigationController(module_map, path_planner)
 
-    cleaningmodule = CleaningModule(30, 0, 0)
+    cleaningmodule = CleaningModule(30,0,0)
     navigation.startNav((0, 0))
 
     window_width = 800

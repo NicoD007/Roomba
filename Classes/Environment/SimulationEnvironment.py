@@ -90,7 +90,7 @@ class SimulationEnvironment:
             return
         
         # ask for the next move from navigation controller
-        next_pos = self.navigation.get_next_move()
+        next_pos = self.navigation.getNextMove()
 
         if next_pos is None:
             return
@@ -112,7 +112,7 @@ class SimulationEnvironment:
             obstacles = self.sensor.Scan(next_pos, getattr(self._module_map, 'map'))
 
             for obs in obstacles:
-                self.navigation.handle_obstacle(obs)
+                self.navigation.handleObstacle(obs)
         
     def connect_mqtt(self) -> bool:
         if self._cleaning_module is None:
