@@ -16,7 +16,7 @@ class CleaningModule(pygame.sprite.Sprite):
         self.direction: str = ""
         self.isActive: bool = False
         self.unFinishedCleaning: bool = False
-        self._sensor = Sensor(1)
+        #self._sensor = Sensor(1)
         self._battery = Battery(joules=100, batteryPercentage=30)
 
         self.size = size
@@ -84,14 +84,14 @@ class CleaningModule(pygame.sprite.Sprite):
         self.isActive = False
         return not self.isActive
 
-    def scan(self) -> None:
+    def scan(self) -> list:
         
         S = Sensor(1)
         grid = getattr(RoomMap, 'blueprint')
         location = self.currentLocation
-        S.Scan(location, grid)
+        
 
-        pass
+        return S.Scan(location, grid)
 
     def getBatteryLevel(self) -> float:
         return float(self._battery.checkBattery())
@@ -113,3 +113,9 @@ class CleaningModule(pygame.sprite.Sprite):
 
     def moveTo(self, target: Tuple[int, int]) -> None:
         self.setPosition(target[0], target[1])
+
+    def temp(self) -> None:
+        #used to see if something compiles, ignore
+        self.scan()
+
+        pass
