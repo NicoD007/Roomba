@@ -27,7 +27,7 @@ class ModuleMap:
         self.map[x][y] = OBSTACLE
 
 
-    def updateCell(self, Location, value) -> None:
+    def updateCell(self, Location: tuple[int, int], value: int) -> None:
         x, y = Location
         self.map[x][y] = value
 

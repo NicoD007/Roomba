@@ -16,6 +16,7 @@ from Core.CleaningModule import CleaningModule
 from Communication.MQTTClient import MQTTClient
 from Core.NavigationController import NavigationController
 from RobotInternals.Sensor import Sensor
+from Core.ModuleMap import ModuleMap
 
 # constants for the cell nature
 WALL = 0
@@ -35,7 +36,9 @@ class SimulationEnvironment:
         charging_station: ChargingStation | None = None,
         cleaning_module: CleaningModule | None = None,
         navigation: NavigationController | None = None,
-        sensor: Sensor | None = None
+        sensor: Sensor | None = None,
+        Roommap : RoomMap | None = None,
+        Modulemap : ModuleMap = ModuleMap([], [])
     ) -> None:
         self._window = None
         self._window_width = window_width
@@ -44,7 +47,8 @@ class SimulationEnvironment:
         self._title = title
         self._clock = None
         self._running = False
-        self._room_map = RoomMap(width=22, height=25, objects=[], numOfRooms=4)
+        self._room_map = Roommap
+        self._module_map = Modulemap
         self._cleaning_module = CleaningModule(30,0,0) #initialize cleaning module with default values
         self._sprites = pygame.sprite.Group()
         self._mqtt_client = None
@@ -60,7 +64,6 @@ class SimulationEnvironment:
         pygame.display.set_caption(self._title)
         self._clock = pygame.time.Clock()
         self._running = True
-        self._room_map.generate()
         # Calculate tile size based on the room map's maximum dimension
         blueprint = getattr(self._room_map, '_blueprint', None)
         if blueprint:
@@ -92,15 +95,18 @@ class SimulationEnvironment:
         if next_pos is None:
             return
         
+        self._module_map.updateCell(self._cleaning_module.currentLocation, CLEANED)  # Mark as robot's current position
+        
         # Move the ROOMBA
         self._cleaning_module.moveTo(next_pos)
 
         # Update robot position in the map
-        self._room_map.map[next_pos[0]][next_pos[1]] = ROBOT  # Mark as robot's current position
+        self._module_map.updateCell(self._cleaning_module.currentLocation, ROBOT)  # Mark as robot's current position
+        
 
         # Sensor handling
         if self.sensor:
-            obstacles = self.sensor.Scan(next_pos, self._room_map._map)
+            obstacles = self.sensor.Scan(next_pos, getattr(self._module_map, 'map'))
 
             for obs in obstacles:
                 self.navigation.handle_obstacle(obs)
