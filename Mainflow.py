@@ -16,20 +16,6 @@ from Classes.Core.ModuleMap import ModuleMap
 
 def main() -> None:
     
-
-    
-    window_width = 900
-    window_height = 650
-    blueprint = getattr(room_map, '_blueprint', None)
-    if blueprint:
-        rows = len(blueprint)
-        cols = len(blueprint[0]) if blueprint[0] else 0
-        max_dim = max(rows, cols)
-        cell_size = min(window_width // max_dim, window_height // max_dim)
-        window_width = cell_size * max_dim
-        window_height = cell_size * max_dim
-    else:
-        cell_size = 30  # fallback
     
     # push room map to module map
     module_map = ModuleMap(cleanedCells=set(), mapData=room_map._map)
@@ -49,6 +35,8 @@ def main() -> None:
         window_height=window_height,
         fps=60,
     )
+
+    
 
     # Run the simulation
     env.run_demo()
