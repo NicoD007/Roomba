@@ -1,9 +1,18 @@
 from Classes.Core.ModuleMap import ModuleMap
+from Classes.Core.PathPlanner import PathPlanner
+
+# constants for the cell nature
+WALL = 0
+UNCLEANED = 1
+OBSTACLE = 2
+CLEANED = 3
+ROBOT = 4
+CHARGER = 5
 
 class NavigationController:
     def __init__(self, moduleMap, pathPlanner):
-        self.moduleMap = moduleMap
-        self.pathPlanner = pathPlanner
+        self.moduleMap = ModuleMap
+        self.pathPlanner = PathPlanner
 
         self.startLocation = None
         self.currentPosition = None
@@ -37,25 +46,25 @@ class NavigationController:
             return
 
         self.targetLocation = target
-        self.path = self.pathPlanner.plan(self.currentPosition, target)
+        self.path = self.pathPlanner.generatePath(self.currentPosition, target)
         self.pathIndex = 0
 
     # -------------------------------
     # UPDATE POSITION
     # -------------------------------
     def updatePosition(self, new_position):
+        # mark current tile as cleaned if not at start or charger
         if self.currentPosition == self.startLocation:
             x, y = self.currentPosition
-            self.moduleMap.map[x][y] = 5 #leave charging station alone
+            self.moduleMap.map[x][y] = CHARGER #leave charging station alone
         else:
             x, y = self.currentPosition
-            self.moduleMap.map[x][y] = 3 #place clean tile
+            self.moduleMap.map[x][y] = CLEANED #place clean tile
         
         self.currentPosition = new_position
 
         x, y = new_position
-        if self.moduleMap.map[x][y] == 1:
-            self.moduleMap.map[x][y] = 4  # move
+        self.moduleMap.map[x][y] = ROBOT  # move
 
     # -------------------------------
     # HANDLE OBSTACLE
@@ -63,11 +72,11 @@ class NavigationController:
     def handle_obstacle(self, pos):     #isnt it belong in sensor and cleaning module?
         x, y = pos
 
-        if self.moduleMap.map[x][y] not in [0, 2]:     
-            self.moduleMap.map[x][y] = 2             
+        if self.moduleMap.map[x][y] not in [WALL, OBSTACLE]:     
+            self.moduleMap.map[x][y] = OBSTACLE             
 
             # Replan ONLY if obstacle affects remaining path
-            if pos in self.path[self.pathIndex:]:
+            if self.path and pos in self.path[self.pathIndex:]:
                 self.requestPath(self.targetLocation)
 
     # -------------------------------
@@ -95,7 +104,7 @@ class NavigationController:
     def find_charger(self):
         for x in range(len(self.moduleMap.map)):
             for y in range(len(self.moduleMap.map[0])):
-                if self.moduleMap.map[x][y] == 5:
+                if self.moduleMap.map[x][y] == CHARGER:
                     return (x, y)
         return None
 
@@ -134,7 +143,7 @@ class NavigationController:
 
         x, y = next_tile
 
-        if self.moduleMap.map[x][y] in [0, 2]:
+        if self.moduleMap.map[x][y] in [WALL, OBSTACLE]:
             self.requestPath(self.targetLocation)
             return None
 
@@ -146,4 +155,4 @@ class NavigationController:
     # STATUS
     # -------------------------------
     def is_done_cleaning(self):
-        return not any(1 in row for row in self.moduleMap.map)
+        return not any(UNCLEANED in row for row in self.moduleMap.map)

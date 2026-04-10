@@ -1,3 +1,13 @@
+from Classes.Core.ModuleMap import ModuleMap
+
+# constants for the cell nature
+WALL = 0
+UNCLEANED = 1
+OBSTACLE = 2
+CLEANED = 3
+ROBOT = 4
+CHARGER = 5
+
 class PathPlanner:
     "This class handles the path planning logic for the roomba using a greedy approach."
 
@@ -34,12 +44,7 @@ class PathPlanner:
     # -------------------------------
     # CORE: GENERATE PATH (VERY SIMPLE GREEDY APPROACH)
     # -------------------------------
-    def generatePath(
-        self,
-        start: tuple[int, int],
-        target: tuple[int, int]
-    ) -> list[tuple[int, int]]:
-
+    def generatePath(self, start: tuple[int, int], target: tuple[int, int]) -> list[tuple[int, int]]:
         path = []
         current = start
 
@@ -86,7 +91,7 @@ class PathPlanner:
     def _find_charger(self):
         for x in range(len(self._map)):
             for y in range(len(self._map[0])):
-                if self._map[x][y] == 5:
+                if self._map[x][y] == CHARGER:
                     return (x, y)
         return None
 
@@ -119,22 +124,22 @@ class PathPlanner:
         cell = self._map[x][y]
 
         # Base score
-        if cell == 1:        # uncleaned
+        if cell == UNCLEANED:        
             score = 10
-        elif cell == 4:      # cleaned
+        elif cell == CLEANED:     
             score = 1
-        elif cell == 5:      # charger
+        elif cell == CHARGER:      
             score = 5
         else:
             return float('-inf')
 
         # Prefer getting closer to target
         dist = abs(pos[0] - target[0]) + abs(pos[1] - target[1])
-        score += (10 - dist)  # closer = better
+        score += max(0, 10 - dist)  # closer = better
 
         # Penalize revisits (prevents loops)
         visits = self._visit_count.get(pos, 0)
-        score -= visits * 2
+        score -= visits * 5 # each visit reduces score
 
         return score
 
@@ -149,7 +154,7 @@ class PathPlanner:
         if x >= len(self._map) or y >= len(self._map[0]):
             return False
 
-        return self._map[x][y] not in [0, 2]
+        return self._map[x][y] not in [WALL, OBSTACLE]
 
     # -------------------------------
     # NEIGHBORS

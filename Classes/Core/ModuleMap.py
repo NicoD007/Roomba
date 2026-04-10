@@ -3,6 +3,14 @@
 #change cleanedCell to cleanedCells
 #remove grid from diagram and code, not sure of its porpuse
 
+# constants for the cell nature
+WALL = 0
+UNCLEANED = 1
+OBSTACLE = 2
+CLEANED = 3
+ROBOT = 4
+CHARGER = 5
+
 class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows? 
     "Represents the robot's internal map."
 
@@ -13,7 +21,7 @@ class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows?
 
     def updateObstacles(self, obstacleLocation) -> None:
         x, y = obstacleLocation
-        self.map[x][y] = 4
+        self.map[x][y] = OBSTACLE
 
     def updateCell(self, Location, value) -> None:
         x, y = Location
