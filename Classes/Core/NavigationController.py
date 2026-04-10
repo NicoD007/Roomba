@@ -17,9 +17,9 @@ class NavigationController:
         self.pathPlanner = pathPlanner
 
 
-        self.startLocation = None
+        self.startLocation = (0,0)
         self.currentPosition = (0,0)
-        self.targetLocation = None
+        self.targetLocation = (0,0)
 
 
         self.path = []
