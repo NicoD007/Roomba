@@ -32,7 +32,7 @@ def main() -> None:
     env = SimulationEnvironment(
         window_width = window_width,
         window_height = window_height,
-        fps = 60,
+        fps = 10,
         navigation = navigation,
         Roommap = room_map,
         Modulemap = module_map
