@@ -1,14 +1,14 @@
-from Core.CleaningModule import CleaningModule
+#from Core.CleaningModule import CleaningModule
 
 
 class ChargingStation:
     "Represents the robot's charging station."
 
-    def __init__(self, stationPos: tuple[int, int], chargeRate: float = 5.0, isOccupied: bool = False, *args, **kwargs) -> None:
+    def __init__(self, stationPos: tuple[int, int], chargeRate: float = 5.0, isOccupied: bool = False,) -> None:
         # Allow both explicit isOccupied keyword arguments and positional occupancy arguments.
-        if isinstance(chargeRate, bool) and not args and 'isOccupied' not in kwargs:
-            isOccupied = chargeRate
-            chargeRate = 5.0
+        #if isinstance(chargeRate, bool) and not args and 'isOccupied' not in kwargs:
+         #   isOccupied = chargeRate
+          #  chargeRate = 5.0
 
         # stationPos is the fixed map position where the robot can charge.
         self.stationPos = stationPos
@@ -20,7 +20,7 @@ class ChargingStation:
     def getChargeRate(self) -> float:
         # Simple accessor for the charging speed.
         return self._chargeRate
-
+    '''
     def charge(self, cleaningModule: CleaningModule, duration: float = 1.0) -> int:
         # Ignore non-positive durations so we do not accidentally change the battery.
         if duration <= 0:
@@ -32,7 +32,7 @@ class ChargingStation:
         # Write the new battery level back into the cleaning module.
         cleaningModule.setBatteryLevel(charged_level)
         return charged_level
-
+    '''
     def atStation(self, position: tuple[int, int]) -> bool:
         # The robot is considered at the station only when its position exactly matches.
         return position == self.stationPos
