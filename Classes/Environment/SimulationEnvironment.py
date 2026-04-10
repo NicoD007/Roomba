@@ -17,6 +17,14 @@ from Communication.MQTTClient import MQTTClient
 from Core.NavigationController import NavigationController
 from RobotInternals.Sensor import Sensor
 
+# constants for the cell nature
+WALL = 0
+UNCLEANED = 1
+OBSTACLE = 2
+CLEANED = 3
+ROBOT = 4
+CHARGER = 5
+
 class SimulationEnvironment:
     def __init__(
         self,
@@ -88,7 +96,7 @@ class SimulationEnvironment:
         self._cleaning_module.move_to(next_pos)
 
         # Update robot position in the map
-        self.
+        self._room_map.map[next_pos[0]][next_pos[1]] = ROBOT  # Mark as robot's current position
 
         # Sensor handling
         if self.sensor:
