@@ -12,7 +12,7 @@ from Classes.Environment.ChargingStation import ChargingStation
 
 def main() -> None:
     # Create room map
-    room_map = RoomMap(width=22, height=25, objects=[], numOfRooms=6)
+    room_map = RoomMap(width=22, height=25, objects=[], numOfRooms=4)
     room_map.generate()
     print("Room map generated")
 

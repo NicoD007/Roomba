@@ -121,7 +121,7 @@ class RoomMap:
         # Create obstacles
         for room in self._rooms:
             start_x, start_y, end_x, end_y, room_id = room
-            for _ in range(random.randint(0, 5)):  # Random number of objects per room
+            for _ in range(random.randint(0, 3)):  # Random number of objects per room
                 obj_x = random.randint(start_x, end_x)
                 obj_y = random.randint(start_y, end_y)
                 # Create an Obstacle instance and add to objects list
@@ -133,7 +133,7 @@ class RoomMap:
                     check_y = obj_y + size - 1
                     
                     # Verify position is within bounds and on a room tile
-                    if check_x < len(self._map[0]) and check_y < len(self._map) and self._map[check_x][check_y] == 1:
+                    if check_x < len(self._map) and check_y < len(self._map[0]) and self._map[check_x][check_y] == 1:
                         break  # Valid placement found
                     
                     size -= 1
@@ -153,7 +153,7 @@ class RoomMap:
                         map_x = obj_x + px
                         map_y = obj_y + py
                         if 0 <= map_y < len(self._map[0]) and 0 <= map_x < len(self._map):
-                            self._map[map_y][map_x] = 2
+                            self._map[map_x][map_y] = 2
 
         # Place back safe zone and charging station if obstacles replaced them
         for x in range(5):
