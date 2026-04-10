@@ -1,6 +1,8 @@
 import sys
 import os
 
+from Classes.RobotInternals.Sensor import Sensor
+
 # Add Classes directory to sys.path for absolute imports
 classes_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if classes_path not in sys.path:
@@ -12,7 +14,8 @@ from Environment.ChargingStation import ChargingStation
 from Environment.RoomMap import RoomMap
 from Core.CleaningModule import CleaningModule
 from Communication.MQTTClient import MQTTClient
-
+from Core.NavigationController import NavigationController
+from RobotInternals.Sensor import Sensor
 
 class SimulationEnvironment:
     def __init__(
@@ -23,6 +26,8 @@ class SimulationEnvironment:
         title: str = "Simulation Environment",
         charging_station: ChargingStation | None = None,
         cleaning_module: CleaningModule | None = None,
+        navigation: NavigationController | None = None,
+        sensor: Sensor | None = None
     ) -> None:
         self._window = None
         self._window_width = window_width
@@ -37,6 +42,8 @@ class SimulationEnvironment:
         self._sprites = pygame.sprite.Group()
         self._mqtt_client = None
         self._mqtt_connected = False
+        self.navigation = navigation
+        self.sensor = sensor
 
     def initialize(self) -> bool:
         pygame.init()
@@ -147,6 +154,9 @@ class SimulationEnvironment:
                     pygame.draw.rect(self._window, (245, 217, 10), rect)  # yollowww
                     pygame.draw.rect(self._window, (50, 50, 150), rect, 1)
 
+
+    def set_navigation(self, navigation: NavigationController) -> None:
+        self.navigation = navigation
 
     def update(self) -> float:
         if self._window is None or self._clock is None:

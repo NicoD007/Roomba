@@ -9,6 +9,9 @@ from Classes.Environment.SimulationEnvironment import SimulationEnvironment
 from Classes.Environment.RoomMap import RoomMap
 from Classes.Core.CleaningModule import CleaningModule
 from Classes.Environment.ChargingStation import ChargingStation
+from Classes.Core.NavigationController import NavigationController
+from Classes.Core.PathPlanner import PathPlanner
+from Classes.Core.ModuleMap import ModuleMap
 
 
 def main() -> None:
@@ -30,8 +33,18 @@ def main() -> None:
         window_height = cell_size * max_dim
     else:
         cell_size = 30  # fallback
+    
+    # push room map to module map
+    module_map = ModuleMap(cleanedCells=set(), mapData=room_map._map)
 
-    # Create cleaning module
+    # inform the path planner of the module map so it can requestMap() when needed
+    path_planner = PathPlanner([], module_map)
+    # inform the navigation controller of the module map and path planner so it can requestPath() when needed
+    navigation = NavigationController(module_map, path_planner)
+
+    # start Roomba
+    start_pos = (cleaningmodule.x, cleaningmodule.y)
+    navigation.startNav(start_pos)
 
     # Create simulation environment with the components
     env = SimulationEnvironment(
@@ -45,6 +58,7 @@ def main() -> None:
 
     # Run the simulation
     env.run_demo()
+
 
 
 if __name__ == "__main__":
