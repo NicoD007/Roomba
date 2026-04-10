@@ -13,7 +13,7 @@ ROBOT = 4
 CHARGER = 5
 
 
-class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows?
+class ModuleMap: 
     "Represents the robot's internal map."
 
 
@@ -22,7 +22,7 @@ class ModuleMap: #Didn't implement arrows yet sorry          #what are arrows?
         self.map = mapData
 
 
-    def updateMap(self, obstacleLocation) -> None:
+    def updateObstacles(self, obstacleLocation) -> None:
         x, y = obstacleLocation
         self.map[x][y] = OBSTACLE
 

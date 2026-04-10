@@ -74,6 +74,29 @@ class SimulationEnvironment:
 
         return True
 
+    def step(self):
+        if not self.navigation:
+            return
+        
+        # ask for the next move from navigation controller
+        next_pos = self.navigation.get_next_move()
+
+        if next_pos is None:
+            return
+        
+        # Move the ROOMBA
+        self._cleaning_module.move_to(next_pos)
+
+        # Update robot position in the map
+        self.
+
+        # Sensor handling
+        if self.sensor:
+            obstacles = self.sensor.scan(next_pos, self._room_map._map)
+
+            for obs in obstacles:
+                self.navigation.handle_obstacle(obs)
+        
     def connect_mqtt(self) -> bool:
         if self._cleaning_module is None:
             self._mqtt_connected = False
@@ -156,9 +179,6 @@ class SimulationEnvironment:
                     pygame.draw.rect(self._window, (245, 217, 10), rect)  # yollowww
                     pygame.draw.rect(self._window, (50, 50, 150), rect, 1)
 
-
-    def set_navigation(self, navigation: NavigationController) -> None:
-        self.navigation = navigation
 
     def update(self) -> float:
         if self._window is None or self._clock is None:

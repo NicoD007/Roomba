@@ -17,17 +17,11 @@ from Classes.Core.ModuleMap import ModuleMap
 def main() -> None:
     
     
-    # push room map to module map
-    module_map = ModuleMap(cleanedCells=set(), mapData=room_map._map)
 
-    # inform the path planner of the module map so it can requestMap() when needed
-    path_planner = PathPlanner([], module_map)
-    # inform the navigation controller of the module map and path planner so it can requestPath() when needed
-    navigation = NavigationController(module_map, path_planner)
 
     # start Roomba
     start_pos = (cleaningmodule.x, cleaningmodule.y)
-    navigation.startNav(start_pos)
+    NavigationController.startNav(start_pos)
 
     # Create simulation environment with the components
     env = SimulationEnvironment(
