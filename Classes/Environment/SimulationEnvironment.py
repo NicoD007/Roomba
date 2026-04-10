@@ -22,7 +22,6 @@ class SimulationEnvironment:
         fps: int = 30,
         title: str = "Simulation Environment",
         charging_station: ChargingStation | None = None,
-        room_map: RoomMap | None = None,
         cleaning_module: CleaningModule | None = None,
     ) -> None:
         self._window = None
@@ -33,7 +32,7 @@ class SimulationEnvironment:
         self._clock = None
         self._running = False
         self._charging_station = charging_station
-        self._room_map = room_map
+        self._room_map = RoomMap(width=22, height=25, objects=[], numOfRooms=4)
         self._cleaning_module = cleaning_module
         self._sprites = pygame.sprite.Group()
         self._mqtt_client = None
@@ -47,7 +46,7 @@ class SimulationEnvironment:
         pygame.display.set_caption(self._title)
         self._clock = pygame.time.Clock()
         self._running = True
-        
+        self._room_map.generate()
         # Calculate tile size based on the room map's maximum dimension
         blueprint = getattr(self._room_map, '_blueprint', None)
         if blueprint:
@@ -59,7 +58,7 @@ class SimulationEnvironment:
             self._cell_size = min(cell_width, cell_height)
         else:
             self._cell_size = 30  # fallback
-
+        '''add cleaning module size here somehow'''
         # Add cleaning module to sprites if provided
         if self._cleaning_module is not None:
             self._sprites.add(self._cleaning_module)
