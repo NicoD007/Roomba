@@ -37,7 +37,7 @@ class NavigationController:
         self.currentPosition = startLocation
 
 
-        self.targetLocation = self.choose_target()
+        self.targetLocation = self.chooseTarget()
 
 
         if self.targetLocation:
@@ -150,7 +150,7 @@ class NavigationController:
 
 
         if not self.path or self.pathIndex >= len(self.path):
-            self.targetLocation = self.choose_target()
+            self.targetLocation = self.chooseTarget()
 
 
             if self.targetLocation:
