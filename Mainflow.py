@@ -32,7 +32,7 @@ def main() -> None:
     env = SimulationEnvironment(
         window_width = window_width,
         window_height = window_height,
-        fps = 10,
+        fps = 30,     #change this back to 10 when submitting
         navigation = navigation,
         Roommap = room_map,
         Modulemap = module_map
@@ -40,7 +40,7 @@ def main() -> None:
    
 
     # Run the simulation
-    env.run_demo()
+    env.run_NOT_demo()
 
 if __name__ == "__main__":
     main()

@@ -110,7 +110,7 @@ class SimulationEnvironment:
 
         # Sensor handling
         if self.sensor:
-            obstacles = self.sensor.Scan(next_pos, getattr(self._module_map, 'map'))
+            obstacles = self.sensor.Scan(next_pos, getattr(self._room_map, '_blueprint'))
 
             for obs in obstacles:
                 self.navigation.handleObstacle(obs)
@@ -218,7 +218,7 @@ class SimulationEnvironment:
                         print("Published: start")
         return self._running
 
-    def run_demo(self) -> None:
+    def run_NOT_demo(self) -> None:
         if not self.initialize():
             print("Failed to initialize simulation environment")
             return
@@ -228,13 +228,13 @@ class SimulationEnvironment:
             self.clear((20, 20, 20))
             # Draw room map
             self.draw_room_map()
-            self.step()
             
             # Draw all sprites
             if self._window is not None:
                 self._sprites.draw(self._window)
             dt = self.update() #dt will be used for charging per second and for drain
 
+            self.step()
            
 
         self.stop()

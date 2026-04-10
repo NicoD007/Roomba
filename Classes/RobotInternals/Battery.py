@@ -9,16 +9,16 @@ class Battery:
         self._battery_percentage = max(0, min(self.FULL_LEVEL, batteryPercentage))
         self._drain_accumulator = 0.0
 
-    def get_level(self) -> int:
+    def getLevel(self) -> int:
         return self._battery_percentage
 
-    def set_level(self, percentage: int) -> None:
+    def setLevel(self, percentage: int) -> None:
         self._battery_percentage = max(0, min(self.FULL_LEVEL, percentage))
 
-    def is_low(self, threshold: int = LOW_THRESHOLD) -> bool:
+    def isLow(self, threshold: int = LOW_THRESHOLD) -> bool:
         return self._battery_percentage <= threshold
 
-    def is_full(self) -> bool:
+    def isFull(self) -> bool:
         return self._battery_percentage >= self.FULL_LEVEL
 
     def drain(self, duration: float, rate_per_second: float = 1.0) -> int:

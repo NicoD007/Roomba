@@ -6,11 +6,11 @@ pygame.init()
 
 WIDTH, HEIGHT = 800, 300
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Message for Nico")
+pygame.display.set_caption("Message for Shaun")
 
 font = pygame.font.SysFont("Arial", 60, bold=True)
 
-TEXT = "NICO IS GAY AND STUPID"
+TEXT = "SHAUN IS GAY AND STUPID"
 
 # VIBGYOR colors (Violet, Indigo, Blue, Green, Yellow, Orange, Red)
 VIBGYOR = [
