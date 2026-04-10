@@ -171,7 +171,7 @@ class RoomMap:
 
         
         # Create charging station
-        charging_station = ChargingStation(stationPos=(400, 300))
+        charging_station = ChargingStation((0, 0),_,True)
         print("Charging station created")
         
         
